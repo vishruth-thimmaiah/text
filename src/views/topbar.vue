@@ -6,11 +6,15 @@
 </template>
 
 <script setup lang="ts">
+import { invoke } from '@tauri-apps/api';
+import { open } from '@tauri-apps/api/dialog';
+import { ref } from 'vue';
+import { UseStore } from '../state';
+import { storeToRefs } from 'pinia';
 
-const lines = inject<Ref<string[]>>("lines", ref([]))
+const { active_tab, lines } = storeToRefs(UseStore())
 
 const tabs = ref<string[]>([])
-var active_tab = inject<Ref<number>>("active_tab")
 
 async function load(file: string) {
 
@@ -18,8 +22,8 @@ async function load(file: string) {
 
 	await invoke("open_file", { filepath: file })
 
-	active_tab!.value = tabs.value.indexOf(file)
-	lines.value = await invoke<string[]>("file_lines", { fileIndex: active_tab!.value, startPos: 0, endPos: 100 })
+	active_tab.value = tabs.value.indexOf(file)
+	lines.value = await invoke<string[]>("file_lines", { fileIndex: active_tab.value, startPos: 0, endPos: 100 })
 }
 
 async function open_file() {
@@ -31,11 +35,6 @@ async function open_file() {
 		load(selected)
 	}
 }
-
-import { invoke } from '@tauri-apps/api';
-import { open } from '@tauri-apps/api/dialog';
-import { inject, ref, Ref } from 'vue';
-
 </script>
 
 <style scoped>

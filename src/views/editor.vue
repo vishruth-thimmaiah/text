@@ -8,13 +8,14 @@
 </template>
 
 <script setup lang="ts">
-import { inject, ref, Ref } from 'vue';
 import Line from '../components/line.vue';
 import { invoke } from '@tauri-apps/api';
 import Cursor from '../components/cursor.vue';
+import { storeToRefs } from 'pinia';
+import { UseStore } from '../state';
 
-const lines = inject<Ref<string[]>>("lines", ref([]))
-var active_tab = inject<Ref<number>>("active_tab")
+const { active_tab, lines } = storeToRefs(UseStore())
+
 
 onkeydown = async (event) => {
 	console.log(event.key)
@@ -29,7 +30,7 @@ onkeydown = async (event) => {
 		console.log(cursor_pos_row, "row")
 
 		lines.value[cursor_pos_row] = lines.value[cursor_pos_row].substring(0, cursor_pos_column) + event.key + lines.value[cursor_pos_row].substring(cursor_pos_column)
-		await invoke("add_chars", { fileIndex: active_tab?.value, chars: event.key, startLine: cursor_pos_row, startPoint: cursor_pos_column })
+		await invoke("add_chars", { fileIndex: active_tab.value, chars: event.key, startLine: cursor_pos_row, startPoint: cursor_pos_column })
 
 		cursor.style.left = `${Number(left_incr) + 8}px`
 	}
