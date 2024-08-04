@@ -15,5 +15,6 @@ label {
 	font-size: 12px;
 	letter-spacing: 1px;
 	text-wrap: nowrap;
+	line-height: 18px;
 }
 </style>
