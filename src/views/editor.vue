@@ -1,41 +1,20 @@
 <template>
-	<button @click="open_file">Open File</button>
-	<Cursor id="cursor" />
 	<div>
-		<Line @click="mouse_click" :text="line" v-for="line in lines" />
+		<Cursor id="cursor" />
+		<div @click="move_cursor">
+			<Line :text="line" v-for="line in lines" />
+		</div>
 	</div>
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from 'vue';
+import { inject, ref, Ref } from 'vue';
 import Line from '../components/line.vue';
-import { event, invoke } from '@tauri-apps/api';
-import { open } from '@tauri-apps/api/dialog';
+import { invoke } from '@tauri-apps/api';
 import Cursor from '../components/cursor.vue';
 
-const lines = ref<string[]>([])
-
-async function load(file: string) {
-
-	lines.value = []
-
-	await invoke("open_file", { filepath: file })
-
-	lines.value = await invoke<string[]>("file_lines", { fileIndex: 0, startPos: 0, endPos: 100 })
-}
-
-onMounted(async () => {
-})
-
-async function open_file() {
-	const selected = await open({})
-	if (Array.isArray(selected)) {
-		console.log("not supported")
-	} else if (selected !== null) {
-		load(selected)
-	}
-}
-
+const lines = inject<Ref<string[]>>("lines", ref([]))
+var active_tab = inject<Ref<number>>("active_tab")
 
 onkeydown = async (event) => {
 	console.log(event.key)
@@ -44,13 +23,13 @@ onkeydown = async (event) => {
 	const top_incr = (window.getComputedStyle(cursor)).top.match(/(\d)+/g)!
 	if (event.key.length === 1) {
 
-		const cursor_pos_column = Math.floor((Number(left_incr) - 6) / 8)
-		const cursor_pos_row = Math.floor((Number(top_incr) - 34) / 18)
+		const cursor_pos_column = Math.floor((Number(left_incr)) / 8)
+		const cursor_pos_row = Math.floor((Number(top_incr) - 16) / 18)
 
-		console.log(cursor_pos_row)
+		console.log(cursor_pos_row, "row")
 
 		lines.value[cursor_pos_row] = lines.value[cursor_pos_row].substring(0, cursor_pos_column) + event.key + lines.value[cursor_pos_row].substring(cursor_pos_column)
-		await invoke("add_chars", { chars: event.key, startLine: cursor_pos_row, startPoint: cursor_pos_column })
+		await invoke("add_chars", { fileIndex: active_tab?.value, chars: event.key, startLine: cursor_pos_row, startPoint: cursor_pos_column })
 
 		cursor.style.left = `${Number(left_incr) + 8}px`
 	}
@@ -77,10 +56,10 @@ onkeydown = async (event) => {
 	}
 }
 
-onclick = (event) => {
+function move_cursor(event: MouseEvent) {
 	const cursor = document.getElementById("cursor")!
-	cursor.style.top = `${round(event.y, 18)}px`
-	cursor.style.left = `${round(event.x, 8)}px`
+	cursor.style.top = `${round(event.y - 20, 18)}px`
+	cursor.style.left = `${round(event.x - 20, 8)}px`
 }
 
 
@@ -102,10 +81,10 @@ div {
 }
 
 #cursor {
-	position: absolute;
+	position: relative;
 	/* 18px */
-	top: calc(34px + 0px);
+	top: 16px;
 	/* 8px */
-	left: calc(6px + 0px);
+	left: 0px;
 }
 </style>

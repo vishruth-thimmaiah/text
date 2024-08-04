@@ -51,9 +51,9 @@ fn file_lines(
 }
 
 #[tauri::command]
-fn add_chars(chars: String, start_line: usize, start_point: usize, state: State<AppState>) {
+fn add_chars(file_index: usize, chars: String, start_line: usize, start_point: usize, state: State<AppState>) {
     let files = state.files.lock().unwrap();
-    let file = files.get(0).unwrap();
+    let file = files.get(file_index).unwrap();
     let line_index = file.rope.lock().unwrap().line_to_char(start_line);
     let line_end_index = file.rope.lock().unwrap().line_to_char(start_line + 1);
 
@@ -67,7 +67,7 @@ fn add_chars(chars: String, start_line: usize, start_point: usize, state: State<
     file.rope
         .lock()
         .unwrap()
-        .write_to(File::create(&files[0].filepath).unwrap())
+        .write_to(File::create(&files[file_index].filepath).unwrap())
         .unwrap();
 }
 
