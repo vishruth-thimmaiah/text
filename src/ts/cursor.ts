@@ -10,6 +10,7 @@ export class Cursor {
 	}
 
 	public set(x: number, y: number) {
+
 		if (x >= 0 && y >= 0) {
 			this.x = x * 8
 			this.y = y * 18

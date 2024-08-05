@@ -4,7 +4,8 @@
 
 <script setup lang="ts">
 defineProps({
-	text: String 
+	text: String,
+	lineNumber: Number
 })
 
 </script>

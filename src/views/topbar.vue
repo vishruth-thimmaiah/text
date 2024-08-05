@@ -9,10 +9,10 @@
 import { invoke } from '@tauri-apps/api';
 import { open } from '@tauri-apps/api/dialog';
 import { ref } from 'vue';
-import { UseStore } from '../state';
+import { EditorState } from '../state';
 import { storeToRefs } from 'pinia';
 
-const { active_tab, lines } = storeToRefs(UseStore())
+const { active_tab, lines } = storeToRefs(EditorState())
 
 const tabs = ref<string[]>([])
 

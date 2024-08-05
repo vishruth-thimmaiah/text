@@ -4,10 +4,12 @@
 
 <script setup lang="ts">
 import { storeToRefs } from 'pinia';
-import { UseStore } from '../state';
+import { EditorState, VimState } from '../state';
 
-const store = UseStore()
-const { vim_mode, cursor } = storeToRefs(store)
+const store = EditorState()
+const { cursor } = storeToRefs(store)
+const vim = VimState()
+const { vim_mode } = storeToRefs(vim)
 </script>
 
 <style scoped>
@@ -36,5 +38,4 @@ div {
 		opacity: 0.0;
 	}
 }
-
 </style>

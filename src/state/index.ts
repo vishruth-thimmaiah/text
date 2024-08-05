@@ -3,15 +3,28 @@ import { ref } from "vue";
 import { VimModes } from "../bindings/vim";
 import { Cursor } from '../ts/cursor.ts'
 
-export const UseStore = defineStore('store', () => {
-	const active_tab = ref<number>(0)
-	const lines = ref<string[]>([])
+export const GlobalStore = defineStore('store', () => {
+	var editor_top_height = 0
+	var editor_down_height = 0
+
+	return { editor_top_height, editor_down_height }
+})
+
+export const VimState = defineStore('vim', () => {
 	const vim_mode = ref<VimModes>(VimModes.Normal)
-	const cursor = ref<Cursor>(new Cursor(0, 0))
 
 	function change_vim_mode(mode: VimModes) {
 		vim_mode.value = mode
 	}
 
-	return { active_tab, lines, vim_mode, change_vim_mode, cursor }
+	return { vim_mode, change_vim_mode }
+})
+
+export const EditorState = defineStore('editor', () => {
+	const active_tab = ref<number>(0)
+	const active_line = ref<number>(0)
+	const lines = ref<string[]>([])
+	const cursor = ref<Cursor>(new Cursor(0, 0))
+
+	return { active_tab, lines, cursor, active_line }
 })

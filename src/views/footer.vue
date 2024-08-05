@@ -7,9 +7,9 @@
 
 <script setup lang="ts">
 import { storeToRefs } from 'pinia';
-import { UseStore } from '../state';
+import { VimState } from '../state';
 
-const { vim_mode } = storeToRefs(UseStore())
+const { vim_mode } = storeToRefs(VimState())
 </script>
 
 <style scoped>

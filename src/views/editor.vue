@@ -1,8 +1,8 @@
 <template>
-	<div class="editor">
+	<div id="editor" class="editor">
 		<Cursor />
 		<div @click="move_cursor" id="lines" class="lines">
-			<Line :text="line" v-for="line in lines" />
+			<Line :text="line" :line-number="index" v-for="(line, index) in lines" />
 		</div>
 	</div>
 </template>
@@ -11,18 +11,18 @@
 import Line from '../components/line.vue';
 import Cursor from '../components/cursor.vue';
 import { storeToRefs } from 'pinia';
-import { UseStore } from '../state';
+import { EditorState } from '../state';
 import { vim_bindings } from '../bindings/vim';
 
-const store = UseStore()
+const store = EditorState()
 const { lines } = storeToRefs(store)
+
 
 onkeydown = async (event) => {
 	document.getElementById("keystrokes")!.textContent = event.key
 	vim_bindings(event.key)
 
 	event.preventDefault()
-
 }
 
 function move_cursor(event: MouseEvent) {
@@ -36,11 +36,12 @@ function move_cursor(event: MouseEvent) {
 <style scoped>
 .editor {
 	position: absolute;
-	left: 25%;
+	left: clamp(20rem, 20rem, 25%);
 	right: 0;
 	top: 1.2em;
 	bottom: 1em;
 	margin: 0.5em;
+	overflow-y: hidden;
 }
 
 .lines {
