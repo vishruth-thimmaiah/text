@@ -1,18 +1,21 @@
 <template>
-	<div :class="vim_mode"></div>
+	<div :style="`left: ${cursor.x}px; top: ${cursor.y}px`" :class="vim_mode"></div>
 </template>
 
 <script setup lang="ts">
 import { storeToRefs } from 'pinia';
 import { UseStore } from '../state';
 
-const {vim_mode} = storeToRefs(UseStore())
+const store = UseStore()
+const { vim_mode, cursor } = storeToRefs(store)
 </script>
 
 <style scoped>
 div {
+	position: relative;
 	width: 1ch;
 	height: 2ch;
+	z-index: 10;
 	/* animation: blink 2s step-start 0s infinite; */
 }
 
@@ -33,4 +36,5 @@ div {
 		opacity: 0.0;
 	}
 }
+
 </style>

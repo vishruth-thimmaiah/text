@@ -27,36 +27,50 @@ var cursor_pos_column = 0
 var command = ""
 
 function normal(key: string) {
-	const cursor = document.getElementById("cursor")!
+	var localcmd = ""
 	const store = UseStore()
+	const { cursor } = storeToRefs(store)
+
+	if (command !== "") {
+		localcmd = command
+		command = ""
+	}
 
 	switch (key) {
 		// Motions
 		case "l":
 		case "ArrowRight":
-			binds.move_right(cursor)
+			binds.move_right()
 			break
 		case "h":
 		case "ArrowLeft":
-			binds.move_left(cursor)
+			binds.move_left()
 			break
 		case "j":
 		case "ArrowDown":
-			binds.move_down(cursor)
+			binds.move_down()
 			break
 		case "k":
 		case "ArrowUp":
-			binds.move_up(cursor)
+			binds.move_up()
 			break
+
+		// insert
 		case "i":
 			store.change_vim_mode(VimModes.Insert)
-			const left_incr = (window.getComputedStyle(cursor)).left.match(/(\d)+/g)!
-			const top_incr = (window.getComputedStyle(cursor)).top.match(/(\d)+/g)!
-			cursor_pos_column = Math.floor((Number(left_incr)) / 8)
-			cursor_pos_row = Math.floor((Number(top_incr) - 16) / 18)
+			cursor_pos_row = cursor.value.y / 18
+			cursor_pos_column = cursor.value.x / 8
 			break
+		case "a":
+			binds.move_right()
+			store.change_vim_mode(VimModes.Insert)
+			cursor_pos_row = cursor.value.y / 18
+			cursor_pos_column = cursor.value.x / 8
+			break
+		
 		default:
-			command += key
+			command = localcmd + key
+			console.log(command)
 			break
 	}
 }
@@ -65,22 +79,25 @@ function normal(key: string) {
 async function insert(key: string) {
 
 	const store = UseStore()
-	const { lines, active_tab } = storeToRefs(store)
+	const { lines, active_tab, cursor } = storeToRefs(store)
 
-	const cursor = document.getElementById("cursor")!
-	const left_incr = (window.getComputedStyle(cursor)).left.match(/(\d)+/g)!
-	const top_incr = (window.getComputedStyle(cursor)).top.match(/(\d)+/g)!
-	const column = Math.floor((Number(left_incr)) / 8)
-	const row = Math.floor((Number(top_incr) - 16) / 18)
 	if (key.length === 1) {
 
-		lines.value[row] = lines.value[row].substring(0, column) + key + lines.value[row].substring(column)
-		cursor.style.left = `${Number(left_incr) + 8}px`
+		const line = lines.value[cursor.value.y / 18]
+		const x = cursor.value.x / 8
+
+
+		lines.value[cursor.value.y / 18] = line.substring(0, x) + key + line.substring(x)
+		cursor.value.rset(1, 0)
 		newstring += key
 
 	} else if (key === "Escape") {
+		binds.move_left()
 		store.change_vim_mode(VimModes.Normal)
-		await invoke("add_chars", { fileIndex: active_tab.value, chars: newstring, startLine: cursor_pos_row, startPoint: cursor_pos_column })
+		if (newstring !== "") {
+			await invoke("add_chars", { fileIndex: active_tab.value, chars: newstring, startLine: cursor_pos_row, startPoint: cursor_pos_column })
+			newstring = ""
+		}
 	}
 }
 

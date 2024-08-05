@@ -12,6 +12,6 @@ import Footer from './views/footer.vue';
 
 <style scoped>
 .editor {
-	margin: 20px;
+	margin: 30px 10px;
 }
 </style>

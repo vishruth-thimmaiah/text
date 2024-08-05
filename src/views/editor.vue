@@ -1,7 +1,7 @@
 <template>
 	<div>
-		<Cursor id="cursor" />
-		<div @click="move_cursor">
+		<Cursor />
+		<div @click="move_cursor" class="lines">
 			<Line :text="line" v-for="line in lines" />
 		</div>
 	</div>
@@ -17,61 +17,28 @@ import { vim_bindings } from '../bindings/vim';
 const store = UseStore()
 const { lines } = storeToRefs(store)
 
-
 onkeydown = async (event) => {
 	document.getElementById("keystrokes")!.textContent = event.key
-
 	vim_bindings(event.key)
 
-	// const cursor = document.getElementById("cursor")!
-	// const left_incr = (window.getComputedStyle(cursor)).left.match(/(\d)+/g)!
-	// const top_incr = (window.getComputedStyle(cursor)).top.match(/(\d)+/g)!
-	// if (event.key.length === 1) {
-	//
-	// 	const cursor_pos_column = Math.floor((Number(left_incr)) / 8)
-	// 	const cursor_pos_row = Math.floor((Number(top_incr) - 16) / 18)
-	//
-	// 	console.log(cursor_pos_row, "row")
-	//
-	// 	lines.value[cursor_pos_row] = lines.value[cursor_pos_row].substring(0, cursor_pos_column) + event.key + lines.value[cursor_pos_row].substring(cursor_pos_column)
-	// 	await invoke("add_chars", { fileIndex: active_tab.value, chars: event.key, startLine: cursor_pos_row, startPoint: cursor_pos_column })
-	//
-	// 	cursor.style.left = `${Number(left_incr) + 8}px`
-	// }
-	//
-	//
-	// }
+	event.preventDefault()
+
 }
 
 function move_cursor(event: MouseEvent) {
-	const cursor = document.getElementById("cursor")!
-	cursor.style.top = `${round(event.y - 20, 18)}px`
-	cursor.style.left = `${round(event.x - 20, 8)}px`
+	store.cursor.set(Math.floor((event.x - 8) / 8), Math.floor((event.y - 30) / 18))
 }
 
-
-function round(number: number, multiple: number) {
-	const mod = number % multiple
-	if (mod < (multiple / 2)) {
-		return number - mod
-	}
-	else {
-		return number + (multiple - mod)
-	}
-}
 </script>
 
 <style scoped>
 div {
+	position: relative;
 	display: flex;
 	flex-direction: column;
 }
 
-#cursor {
-	position: relative;
-	/* 18px */
-	top: 16px;
-	/* 8px */
-	left: 0px;
+.lines {
+	position: absolute;
 }
 </style>
