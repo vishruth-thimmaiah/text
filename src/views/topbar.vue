@@ -44,5 +44,6 @@ async function open_file() {
 	right: 0;
 	top: 0;
 	background: #181818;
+	z-index: 10;
 }
 </style>

@@ -1,7 +1,7 @@
 <template>
-	<div>
+	<div class="editor">
 		<Cursor />
-		<div @click="move_cursor" class="lines">
+		<div @click="move_cursor" id="lines" class="lines">
 			<Line :text="line" v-for="line in lines" />
 		</div>
 	</div>
@@ -26,19 +26,27 @@ onkeydown = async (event) => {
 }
 
 function move_cursor(event: MouseEvent) {
-	store.cursor.set(Math.floor((event.x - 8) / 8), Math.floor((event.y - 30) / 18))
+	const element = document.getElementById("lines")
+	const rect = element?.getBoundingClientRect()
+	store.cursor.set(Math.floor((event.x - rect!.left) / 8), Math.floor((event.y - rect!.top) / 18))
 }
 
 </script>
 
 <style scoped>
-div {
-	position: relative;
-	display: flex;
-	flex-direction: column;
+.editor {
+	position: absolute;
+	left: 25%;
+	right: 0;
+	top: 1.2em;
+	bottom: 1em;
+	margin: 0.5em;
 }
 
 .lines {
 	position: absolute;
+	display: flex;
+	flex-direction: column;
+	top: 0;
 }
 </style>

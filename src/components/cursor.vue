@@ -15,7 +15,7 @@ div {
 	position: relative;
 	width: 1ch;
 	height: 2ch;
-	z-index: 10;
+	z-index: 2;
 	/* animation: blink 2s step-start 0s infinite; */
 }
 

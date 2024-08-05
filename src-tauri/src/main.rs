@@ -1,7 +1,10 @@
 // Prevents additional console window on Windows in release, DO NOT REMOVE!!
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
-use std::{fs::File, sync::Mutex};
+use std::{
+    fs::{self, File, ReadDir},
+    sync::Mutex,
+};
 
 use ropey::Rope;
 use tauri::State;
@@ -13,6 +16,34 @@ struct OpenFiles {
 
 struct AppState {
     files: Mutex<Vec<OpenFiles>>,
+    active_dir: Option<ReadDir>,
+}
+
+#[tauri::command]
+fn list_files(dir: String, state: State<AppState>) -> (Vec<String>, Vec<String>) {
+    let files = fs::read_dir(dir).unwrap();
+
+    let mut file_names = Vec::new();
+    let mut dir_names = Vec::new();
+
+    for file in files {
+        if let Ok(file) = file {
+            let path = file.path();
+            let pathname = path
+                .file_name()
+                .unwrap()
+                .to_str()
+                .map(|s| s.to_owned())
+                .unwrap();
+            if path.is_file() {
+                file_names.push(pathname)
+            } else if path.is_dir() {
+                dir_names.push(pathname)
+            }
+        }
+    }
+
+    return (file_names, dir_names);
 }
 
 #[tauri::command]
@@ -51,7 +82,13 @@ fn file_lines(
 }
 
 #[tauri::command]
-fn add_chars(file_index: usize, chars: String, start_line: usize, start_point: usize, state: State<AppState>) {
+fn add_chars(
+    file_index: usize,
+    chars: String,
+    start_line: usize,
+    start_point: usize,
+    state: State<AppState>,
+) {
     let files = state.files.lock().unwrap();
     let file = files.get(file_index).unwrap();
     let line_index = file.rope.lock().unwrap().line_to_char(start_line);
@@ -74,11 +111,14 @@ fn add_chars(file_index: usize, chars: String, start_line: usize, start_point: u
 fn main() {
     let app_state = AppState {
         files: Mutex::new(vec![]),
+        active_dir: None,
     };
 
     tauri::Builder::default()
         .manage(app_state)
-        .invoke_handler(tauri::generate_handler![open_file, file_lines, add_chars])
+        .invoke_handler(tauri::generate_handler![
+            open_file, file_lines, add_chars, list_files
+        ])
         .run(tauri::generate_context!())
         .expect("error while running application");
 }

@@ -18,9 +18,11 @@ const { vim_mode } = storeToRefs(UseStore())
 	left: 0;
 	right: 0;
 	bottom: 0;
-	background-color: #151515;
+	height: 1.5em;
+	background: #181818;
 	display: flex;
 	padding: 0 10px;
+	z-index: 10;
 }
 
 #keystrokes {

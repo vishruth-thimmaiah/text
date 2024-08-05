@@ -23,6 +23,5 @@ export class Cursor {
 			this.x += newx
 			this.y += newy
 		}
-		console.log(this.x, this.y)
 	}
 }
