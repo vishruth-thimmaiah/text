@@ -5,7 +5,7 @@ export enum VimModes {
 }
 
 import { storeToRefs } from 'pinia';
-import { EditorState, VimState } from '../state/index.ts';
+import { EditorState, GlobalStore, VimState } from '../state/index.ts';
 import * as binds from './common.ts'
 import { invoke } from '@tauri-apps/api';
 
@@ -68,7 +68,7 @@ function normal(key: string) {
 			cursor_pos_row = cursor.value.y / 18
 			cursor_pos_column = cursor.value.x / 8
 			break
-		
+
 		default:
 			command = localcmd + key
 			console.log(command)
@@ -81,12 +81,13 @@ async function insert(key: string) {
 
 	const store = EditorState()
 	const { lines, active_tab, cursor } = storeToRefs(store)
+	const {editor_top_height} = storeToRefs(GlobalStore())
 	const vim = VimState()
 
 	if (key.length === 1) {
 
-		const line = lines.value[cursor.value.y / 18]
 		const x = cursor.value.x / 8
+		const line = lines.value[cursor.value.y / 18]
 
 
 		lines.value[cursor.value.y / 18] = line.substring(0, x) + key + line.substring(x)
@@ -97,7 +98,7 @@ async function insert(key: string) {
 		binds.move_left()
 		vim.change_vim_mode(VimModes.Normal)
 		if (newstring !== "") {
-			await invoke("add_chars", { fileIndex: active_tab.value, chars: newstring, startLine: cursor_pos_row, startPoint: cursor_pos_column })
+			await invoke("add_chars", { fileIndex: active_tab.value, chars: newstring, startLine: cursor_pos_row + editor_top_height.value, startPoint: cursor_pos_column })
 			newstring = ""
 		}
 	}

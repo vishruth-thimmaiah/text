@@ -1,5 +1,5 @@
 <template>
-	<div :style="`left: ${cursor.x}px; top: ${cursor.y}px`" :class="vim_mode"></div>
+	<div id="cursor" :style="`left: ${cursor.x}px; top: ${cursor.y}px`" :class="vim_mode"></div>
 </template>
 
 <script setup lang="ts">

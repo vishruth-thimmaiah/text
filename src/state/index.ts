@@ -4,8 +4,9 @@ import { VimModes } from "../bindings/vim";
 import { Cursor } from '../ts/cursor.ts'
 
 export const GlobalStore = defineStore('store', () => {
-	var editor_top_height = 0
-	var editor_down_height = 0
+	var editor_top_height = ref<number>(0)
+	var editor_down_height = ref<number>(0)
+
 
 	return { editor_top_height, editor_down_height }
 })

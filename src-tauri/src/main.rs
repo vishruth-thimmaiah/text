@@ -68,14 +68,15 @@ fn file_lines(
 
     let mut lines: Vec<String> = vec![];
     let binding = file.rope.lock().unwrap();
-    let mut line = binding.lines_at(start_pos);
-    while start_pos < end_pos {
-        let next_line = line.next();
-        if next_line == None {
-            break;
+    if let Some(mut line) = binding.get_lines_at(start_pos) {
+        while start_pos < end_pos {
+            let next_line = line.next();
+            if next_line == None {
+                break;
+            }
+            lines.push(next_line.expect("Error reading file").to_string());
+            start_pos += 1;
         }
-        lines.push(next_line.expect("Error reading file").to_string());
-        start_pos += 1;
     }
 
     lines

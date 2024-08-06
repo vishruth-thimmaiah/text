@@ -9,10 +9,11 @@
 import { invoke } from '@tauri-apps/api';
 import { open } from '@tauri-apps/api/dialog';
 import { ref } from 'vue';
-import { EditorState } from '../state';
+import { EditorState, GlobalStore } from '../state';
 import { storeToRefs } from 'pinia';
 
 const { active_tab, lines } = storeToRefs(EditorState())
+const { editor_down_height } = storeToRefs(GlobalStore())
 
 const tabs = ref<string[]>([])
 
@@ -21,9 +22,11 @@ async function load(file: string) {
 	lines.value = []
 
 	await invoke("open_file", { filepath: file })
+	const height = document.getElementById("editor")!.getBoundingClientRect().height
+	editor_down_height.value = Math.ceil(height/18)
 
 	active_tab.value = tabs.value.indexOf(file)
-	lines.value = await invoke<string[]>("file_lines", { fileIndex: active_tab.value, startPos: 0, endPos: 100 })
+	lines.value = await invoke<string[]>("file_lines", { fileIndex: active_tab.value, startPos: 0, endPos: editor_down_height.value })
 }
 
 async function open_file() {
@@ -35,6 +38,7 @@ async function open_file() {
 		load(selected)
 	}
 }
+
 </script>
 
 <style scoped>
