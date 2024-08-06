@@ -38,7 +38,7 @@ export class Cursor {
 		else if (this.y + newy < 0) {
 
 			const line_number = window_props.editor_top_height.value - 1
-			if (line_number > 0) {
+			if (line_number >= 0) {
 				const new_line = await invoke<string[]>("file_lines", {
 					fileIndex: active_tab.value, startPos: line_number, endPos: line_number + 1
 				})

@@ -46,8 +46,8 @@ async function open_file(file: string) {
 	await invoke("open_file", { filepath: current_dir.value + '/' + file })
 	tabs.value.push(file)
 
-	lines.value = await invoke<string[]>("file_lines", { fileIndex: active_tab.value, startPos: 0, endPos: editor_down_height.value })
 	active_tab.value = tabs.value.length - 1
+	lines.value = await invoke<string[]>("file_lines", { fileIndex: active_tab.value, startPos: 0, endPos: editor_down_height.value })
 }
 
 </script>

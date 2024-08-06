@@ -38,7 +38,6 @@ onwheel = async (event) => {
 	else {
 		cursor.value.rset(0, -1)
 	}
-	console.log('rasfd')
 }
 
 </script>

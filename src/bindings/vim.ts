@@ -5,9 +5,8 @@ export enum VimModes {
 }
 
 import { storeToRefs } from 'pinia';
-import { EditorState, GlobalStore, VimState } from '../state/index.ts';
+import { VimState } from '../state/index.ts';
 import * as binds from './common.ts'
-import { invoke } from '@tauri-apps/api';
 
 
 export function vim_bindings(key: string) {
@@ -20,17 +19,11 @@ export function vim_bindings(key: string) {
 	}
 }
 
-var newstring = ""
-var cursor_pos_row = 0
-var cursor_pos_column = 0
 
 var command = ""
 
 function normal(key: string) {
 	var localcmd = ""
-	const store = EditorState()
-	const vim = VimState()
-	const { cursor } = storeToRefs(store)
 
 	if (command !== "") {
 		localcmd = command
@@ -58,16 +51,11 @@ function normal(key: string) {
 
 		// insert
 		case "i":
-			vim.change_vim_mode(VimModes.Insert)
-			cursor_pos_row = cursor.value.y / 18
-			cursor_pos_column = (cursor.value.x - 40) / 8
+			binds.insert_mode()
 			break
 		case "a":
 			binds.move_right()
-			vim.change_vim_mode(VimModes.Insert)
-			cursor_pos_row = cursor.value.y / 18
-			console.log((cursor.value.x - 6) / 8, cursor.value.x)
-			cursor_pos_column = (cursor.value.x - 40) / 8
+			binds.insert_mode()
 			break
 
 		default:
@@ -80,30 +68,12 @@ function normal(key: string) {
 
 async function insert(key: string) {
 
-	const store = EditorState()
-	const { lines, active_tab, cursor } = storeToRefs(store)
-	const { editor_top_height } = storeToRefs(GlobalStore())
-	const vim = VimState()
 
 	if (key.length === 1) {
-
-		const x = cursor.value.x / 8 - 5
-		const line = lines.value[cursor.value.y / 18]
-
-
-		lines.value[cursor.value.y / 18] = line.substring(0, x) + key + line.substring(x)
-		cursor.value.rset(1, 0)
-		newstring += key
+		binds.insert_char(key)
 
 	} else if (key === "Escape") {
-
-		binds.move_left()
-		vim.change_vim_mode(VimModes.Normal)
-		if (newstring !== "" && active_tab.value) {
-			console.log(cursor_pos_row, editor_top_height.value, cursor_pos_column)
-			await invoke("add_chars", { fileIndex: active_tab.value, chars: newstring, startLine: cursor_pos_row + editor_top_height.value, startPoint: cursor_pos_column })
-			newstring = ""
-		}
+		binds.save_file()
 	}
 }
 
