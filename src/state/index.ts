@@ -25,7 +25,7 @@ export const EditorState = defineStore('editor', () => {
 	const active_tab = ref<number>(0)
 	const active_line = ref<number>(0)
 	const lines = ref<string[]>([])
-	const cursor = ref<Cursor>(new Cursor(0, 0))
+	const cursor = ref<Cursor>(new Cursor(40, 0))
 
 	return { active_tab, lines, cursor, active_line }
 })

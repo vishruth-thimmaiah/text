@@ -51,6 +51,7 @@ onwheel = async (event) => {
 	top: 1.2em;
 	bottom: 1em;
 	margin: 0.5em;
+	margin-left: 0;
 	overflow-y: hidden;
 }
 

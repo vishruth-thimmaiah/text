@@ -15,7 +15,7 @@ export class Cursor {
 
 	public set(x: number, y: number) {
 
-		if (x >= 0 && y >= 0) {
+		if (x >= 5 && y >= 0) {
 			this.x = x * 8
 			this.y = y * 18
 		}
@@ -47,7 +47,7 @@ export class Cursor {
 				window_props.editor_top_height.value -= 1
 			}
 		}
-		else if (this.x + newx >= 0 && this.y + newy >= 0) {
+		else if (this.x + newx >= 40 && this.y + newy >= 0) {
 			this.x += newx
 			this.y += newy
 		}

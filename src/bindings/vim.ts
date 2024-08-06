@@ -60,13 +60,14 @@ function normal(key: string) {
 		case "i":
 			vim.change_vim_mode(VimModes.Insert)
 			cursor_pos_row = cursor.value.y / 18
-			cursor_pos_column = cursor.value.x / 8
+			cursor_pos_column = (cursor.value.x - 40) / 8
 			break
 		case "a":
 			binds.move_right()
 			vim.change_vim_mode(VimModes.Insert)
 			cursor_pos_row = cursor.value.y / 18
-			cursor_pos_column = cursor.value.x / 8
+			console.log((cursor.value.x - 6) / 8, cursor.value.x)
+			cursor_pos_column = (cursor.value.x - 40) / 8
 			break
 
 		default:
@@ -81,7 +82,7 @@ async function insert(key: string) {
 
 	const store = EditorState()
 	const { lines, active_tab, cursor } = storeToRefs(store)
-	const {editor_top_height} = storeToRefs(GlobalStore())
+	const { editor_top_height } = storeToRefs(GlobalStore())
 	const vim = VimState()
 
 	if (key.length === 1) {
