@@ -51,6 +51,14 @@ function normal(key: string) {
 			binds.move_up()
 			break
 
+		case "w":
+			binds.next_word()
+			break
+
+		case "b":
+			binds.prev_word()
+			break
+
 		// insert
 		case "i":
 			binds.insert_mode()
