@@ -13,12 +13,13 @@ export const GlobalStore = defineStore('store', () => {
 
 export const VimState = defineStore('vim', () => {
 	const vim_mode = ref<VimModes>(VimModes.Normal)
+	const command = ref<string>("")
 
 	function change_vim_mode(mode: VimModes) {
 		vim_mode.value = mode
 	}
 
-	return { vim_mode, change_vim_mode}
+	return { vim_mode, change_vim_mode, command}
 })
 
 export const EditorState = defineStore('editor', () => {

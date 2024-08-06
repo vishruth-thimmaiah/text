@@ -1,11 +1,12 @@
 export enum VimModes {
 	Normal = "normal",
 	Insert = "insert",
-	Visual = "visual"
+	Visual = "visual",
+	Command = "command"
 }
 
 import { storeToRefs } from 'pinia';
-import { VimState } from '../state/index.ts';
+import { EditorState, VimState } from '../state/index.ts';
 import * as binds from './common.ts'
 
 
@@ -15,19 +16,20 @@ export function vim_bindings(key: string) {
 	switch (vim_mode.value) {
 		case VimModes.Normal: normal(key); break
 		case VimModes.Insert: insert(key); break
+		case VimModes.Command: command(key); break
 		// case VimModes.Visual: visual(key); break
 	}
 }
 
 
-var command = ""
+var cmd = ""
 
 function normal(key: string) {
 	var localcmd = ""
 
-	if (command !== "") {
-		localcmd = command
-		command = ""
+	if (cmd !== "") {
+		localcmd = cmd
+		cmd = ""
 	}
 
 	switch (key) {
@@ -58,9 +60,12 @@ function normal(key: string) {
 			binds.insert_mode()
 			break
 
+		case ":":
+			binds.command_mode()
+			break
+
 		default:
-			command = localcmd + key
-			console.log(command)
+			cmd = localcmd + key
 			break
 	}
 }
@@ -74,6 +79,32 @@ async function insert(key: string) {
 
 	} else if (key === "Escape") {
 		binds.save_file()
+	}
+}
+
+function command(key: string) {
+	const store = VimState()
+	const { command } = storeToRefs(store)
+	switch (key) {
+		case "Escape":
+			store.change_vim_mode(VimModes.Normal)
+			command.value = ""
+
+			break
+		case "Enter":
+			if (command.value.match(/(\d)+/)) {
+				const { cursor } = storeToRefs(EditorState())
+				cursor.value.set(5, Number(command.value)-1)
+			}
+			store.change_vim_mode(VimModes.Normal)
+			command.value = ""
+			break
+
+		default:
+			if (key.length === 1) {
+				command.value += key
+			}
+			break
 	}
 }
 

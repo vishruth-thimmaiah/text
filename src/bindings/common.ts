@@ -55,3 +55,8 @@ export function insert_mode() {
 	cursor_pos_row = cursor.value.y / 18
 	cursor_pos_column = (cursor.value.x - 40) / 8
 }
+
+export function command_mode() {
+	const vim = VimState()
+	vim.change_vim_mode(VimModes.Command)
+}
