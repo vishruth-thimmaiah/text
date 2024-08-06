@@ -4,11 +4,11 @@ import { VimModes } from "../bindings/vim";
 import { Cursor } from '../ts/cursor.ts'
 
 export const GlobalStore = defineStore('store', () => {
-	var editor_top_height = ref<number>(0)
-	var editor_down_height = ref<number>(0)
+	const editor_top_height = ref<number>(0)
+	const editor_down_height = ref<number>(0)
+	const tabs = ref<string[]>([])
 
-
-	return { editor_top_height, editor_down_height }
+	return { editor_top_height, editor_down_height, tabs }
 })
 
 export const VimState = defineStore('vim', () => {
@@ -18,7 +18,7 @@ export const VimState = defineStore('vim', () => {
 		vim_mode.value = mode
 	}
 
-	return { vim_mode, change_vim_mode }
+	return { vim_mode, change_vim_mode}
 })
 
 export const EditorState = defineStore('editor', () => {

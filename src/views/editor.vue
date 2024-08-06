@@ -48,7 +48,7 @@ onwheel = async (event) => {
 	position: absolute;
 	left: clamp(20rem, 20rem, 25%);
 	right: 0;
-	top: 1.2em;
+	top: 1.5em;
 	bottom: 1em;
 	margin: 0.5em;
 	margin-left: 0;

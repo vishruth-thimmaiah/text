@@ -6,7 +6,10 @@ use tauri::State;
 use crate::{InnerAppState, OpenFiles};
 
 #[tauri::command]
-pub fn list_files(dir: String, state: State<'_, Mutex<InnerAppState>>) -> (Vec<String>, Vec<String>) {
+pub fn list_files(
+    dir: String,
+    state: State<'_, Mutex<InnerAppState>>,
+) -> (Vec<String>, Vec<String>) {
     let files = fs::read_dir(&dir).unwrap();
     state.lock().unwrap().active_dir = Some(dir);
 
@@ -41,6 +44,12 @@ pub fn open_file(filepath: String, state: State<'_, Mutex<InnerAppState>>) {
         filepath,
         rope: Mutex::new(rope),
     });
+}
+
+#[tauri::command]
+pub fn close_file(file_index: usize, state: State<'_, Mutex<InnerAppState>>) {
+    let mut files = state.lock().unwrap();
+    files.files.remove(file_index);
 }
 
 #[tauri::command]
@@ -90,9 +99,6 @@ pub fn add_chars(
     rope.remove(line_index..line_end_index);
     rope.insert(line_index, &new_line);
 
-    file.rope
-        .lock()
-        .unwrap()
-        .write_to(File::create(&file.filepath).unwrap())
+    rope.write_to(File::create(&file.filepath).unwrap())
         .unwrap();
 }

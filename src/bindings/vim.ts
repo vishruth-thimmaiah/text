@@ -87,7 +87,7 @@ async function insert(key: string) {
 
 	if (key.length === 1) {
 
-		const x = cursor.value.x / 8
+		const x = cursor.value.x / 8 - 5
 		const line = lines.value[cursor.value.y / 18]
 
 
@@ -96,9 +96,11 @@ async function insert(key: string) {
 		newstring += key
 
 	} else if (key === "Escape") {
+
 		binds.move_left()
 		vim.change_vim_mode(VimModes.Normal)
 		if (newstring !== "") {
+			console.log(cursor_pos_row, editor_top_height.value, cursor_pos_column)
 			await invoke("add_chars", { fileIndex: active_tab.value, chars: newstring, startLine: cursor_pos_row + editor_top_height.value, startPoint: cursor_pos_column })
 			newstring = ""
 		}

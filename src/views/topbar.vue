@@ -1,42 +1,32 @@
 <template>
 	<div class="topbar">
-		<button @click="load(tab)" v-for="tab in tabs">{{ tab }}</button>
-		<button @click="open_file">Open File</button>
+		<div v-for="(tab, index) in tabs">
+			<label @click="open_existing_file(index)">{{ tab }}</label>
+			<button @click="close_file(index)">×</button>
+		</div>
 	</div>
 </template>
 
 <script setup lang="ts">
 import { invoke } from '@tauri-apps/api';
-import { open } from '@tauri-apps/api/dialog';
-import { ref } from 'vue';
 import { EditorState, GlobalStore } from '../state';
 import { storeToRefs } from 'pinia';
 
 const { active_tab, lines } = storeToRefs(EditorState())
-const { editor_down_height } = storeToRefs(GlobalStore())
+const { tabs, editor_down_height } = storeToRefs(GlobalStore())
 
-const tabs = ref<string[]>([])
-
-async function load(file: string) {
-
-	lines.value = []
-
-	await invoke("open_file", { filepath: file })
-	const height = document.getElementById("editor")!.getBoundingClientRect().height
-	editor_down_height.value = Math.ceil(height/18)
-
-	active_tab.value = tabs.value.indexOf(file)
-	lines.value = await invoke<string[]>("file_lines", { fileIndex: active_tab.value, startPos: 0, endPos: editor_down_height.value })
+async function open_existing_file(index: number) {
+	active_tab.value = index
+	lines.value = await invoke<string[]>("file_lines", { fileIndex: index, startPos: 0, endPos: editor_down_height.value })
 }
 
-async function open_file() {
-	const selected = await open({})
-	if (Array.isArray(selected)) {
-		console.log("not supported")
-	} else if (selected !== null) {
-		tabs.value.push(selected)
-		load(selected)
+async function close_file(index: number) {
+	tabs.value.splice(index, 1)
+	if (active_tab.value === index) {
+		active_tab.value -= 1
+		await open_existing_file(active_tab.value)
 	}
+	await invoke<string[]>("close_file", { fileIndex: index })
 }
 
 </script>
@@ -47,7 +37,38 @@ async function open_file() {
 	left: 0;
 	right: 0;
 	top: 0;
+	height: 2em;
 	background: #181818;
 	z-index: 10;
+	display: flex;
+
+	div {
+		background: #333333;
+		font-size: 14px;
+		margin: 4px 2px;
+		border-radius: 5px;
+		padding: 0 5px;
+		cursor: pointer;
+		color: white;
+		transition: background 700ms;
+
+		label {
+			cursor: inherit;
+		}
+
+		button {
+			background: transparent;
+			border: none;
+			color: inherit;
+
+			&:hover {
+				color: lightgray;
+			}
+		}
+
+		&:hover {
+			background: #555555;
+		}
+	}
 }
 </style>

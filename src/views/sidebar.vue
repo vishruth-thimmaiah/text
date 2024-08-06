@@ -4,8 +4,10 @@
 			<label class="curr_dir">{{ current_dir }}</label>
 			<button @click="open_dir" class="open_dir">+</button>
 		</div>
-		<div v-for="dir in dirs"> {{ dir }}/</div>
-		<div v-for="file in files"> {{ file }}</div>
+		<div class="files">
+			<button class="dir" v-for="dir in dirs"> {{ dir }}/</button>
+			<button @click="open_file(file)" class="file" v-for="file in files"> {{ file }}</button>
+		</div>
 	</div>
 </template>
 
@@ -13,10 +15,15 @@
 import { ref } from 'vue';
 import { open } from '@tauri-apps/api/dialog';
 import { invoke } from '@tauri-apps/api';
+import { storeToRefs } from 'pinia';
+import { EditorState, GlobalStore } from '../state';
 
 const dirs = ref<string[]>()
 const files = ref<string[]>()
 const current_dir = ref<string>("")
+
+const { tabs, editor_down_height } = storeToRefs(GlobalStore())
+const { lines, active_tab } = storeToRefs(EditorState())
 
 
 async function open_dir() {
@@ -29,6 +36,18 @@ async function open_dir() {
 		files.value = children[0]
 		dirs.value = children[1]
 	}
+}
+
+async function open_file(file: string) {
+
+	const height = document.getElementById("editor")!.getBoundingClientRect().height
+	editor_down_height.value = Math.ceil(height / 18)
+
+	await invoke("open_file", { filepath: current_dir.value + '/' + file })
+	tabs.value.push(file)
+
+	lines.value = await invoke<string[]>("file_lines", { fileIndex: active_tab.value, startPos: 0, endPos: editor_down_height.value })
+	active_tab.value = tabs.value.length - 1
 }
 
 </script>
@@ -45,6 +64,7 @@ async function open_dir() {
 
 .tools {
 	display: flex;
+	align-items: center;
 
 	.curr_dir {}
 
@@ -54,6 +74,26 @@ async function open_dir() {
 		color: white;
 		margin-left: auto;
 		font-size: 25px;
+	}
+}
+
+.files {
+	display: flex;
+	flex-direction: column;
+
+	.dir,
+	.file {
+		text-align: left;
+		background: none;
+		color: white;
+		border: 0;
+		margin: 0 5px;
+		border-radius: 5px;
+		transition: background 300ms;
+
+		&:hover {
+			background: #555555;
+		}
 	}
 }
 </style>

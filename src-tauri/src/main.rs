@@ -3,6 +3,7 @@
 
 mod editor;
 
+use crate::editor::file::close_file;
 use editor::file::{add_chars, file_lines, list_files, open_file};
 use std::sync::Mutex;
 
@@ -35,7 +36,7 @@ fn main() {
     tauri::Builder::default()
         .manage(app_state)
         .invoke_handler(tauri::generate_handler![
-            open_file, file_lines, add_chars, list_files
+            open_file, file_lines, add_chars, list_files, close_file
         ])
         .run(tauri::generate_context!())
         .expect("error while running application");
