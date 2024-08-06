@@ -6,10 +6,8 @@
 import { storeToRefs } from 'pinia';
 import { EditorState, VimState } from '../state';
 
-const store = EditorState()
-const { cursor } = storeToRefs(store)
-const vim = VimState()
-const { vim_mode } = storeToRefs(vim)
+const { cursor } = storeToRefs(EditorState())
+const { vim_mode } = storeToRefs(VimState())
 </script>
 
 <style scoped>

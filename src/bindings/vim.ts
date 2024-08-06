@@ -99,7 +99,7 @@ async function insert(key: string) {
 
 		binds.move_left()
 		vim.change_vim_mode(VimModes.Normal)
-		if (newstring !== "") {
+		if (newstring !== "" && active_tab.value) {
 			console.log(cursor_pos_row, editor_top_height.value, cursor_pos_column)
 			await invoke("add_chars", { fileIndex: active_tab.value, chars: newstring, startLine: cursor_pos_row + editor_top_height.value, startPoint: cursor_pos_column })
 			newstring = ""

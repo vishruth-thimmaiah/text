@@ -1,6 +1,6 @@
 <template>
 	<div id="editor" class="editor">
-		<Cursor />
+		<Cursor v-if="active_tab !== null" />
 		<div @click="move_cursor" id="lines" class="lines">
 			<Line :text="line" :line-number="index" v-for="(line, index) in lines" />
 		</div>
@@ -15,7 +15,7 @@ import { EditorState } from '../state';
 import { vim_bindings } from '../bindings/vim';
 
 const store = EditorState()
-const { lines, cursor } = storeToRefs(store)
+const { lines, cursor, active_tab } = storeToRefs(store)
 
 
 onkeydown = async (event) => {

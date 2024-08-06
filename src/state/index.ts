@@ -22,10 +22,9 @@ export const VimState = defineStore('vim', () => {
 })
 
 export const EditorState = defineStore('editor', () => {
-	const active_tab = ref<number>(0)
-	const active_line = ref<number>(0)
+	const active_tab = ref<number | null>(null)
 	const lines = ref<string[]>([])
 	const cursor = ref<Cursor>(new Cursor(40, 0))
 
-	return { active_tab, lines, cursor, active_line }
+	return { active_tab, lines, cursor }
 })

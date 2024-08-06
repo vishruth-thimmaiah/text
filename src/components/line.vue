@@ -1,5 +1,5 @@
 <template>
-	<span>
+	<span :class="(cursor.y / 18) === lineNumber ? 'active' : ''">
 		<span class="line_number">{{ lineNumber! + 1 + editor_top_height }}</span>
 		<span>{{ text }}</span>
 	</span>
@@ -7,7 +7,7 @@
 
 <script setup lang="ts">
 import { storeToRefs } from 'pinia';
-import { GlobalStore } from '../state';
+import { EditorState, GlobalStore } from '../state';
 
 defineProps({
 	text: String,
@@ -15,6 +15,7 @@ defineProps({
 })
 
 const { editor_top_height } = storeToRefs(GlobalStore())
+const { cursor } = storeToRefs(EditorState())
 
 </script>
 
@@ -32,6 +33,15 @@ span {
 		padding-left: 2px;
 		background-color: #222222;
 		margin-right: 8px;
+
+	}
+
+	&.active {
+		background-color: #141414;
+
+		.line_number {
+			background-color: inherit;
+		}
 	}
 }
 </style>

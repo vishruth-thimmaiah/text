@@ -3,7 +3,7 @@ import { EditorState, GlobalStore } from "../state";
 import { invoke } from "@tauri-apps/api";
 
 export class Cursor {
-	cursor: HTMLElement;
+	protected cursor: HTMLElement;
 	public x: number;
 	public y: number;
 
