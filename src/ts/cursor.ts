@@ -14,19 +14,18 @@ export class Cursor {
 	}
 
 	public set(x: number, y: number) {
-
-		if (x >= 5 && y >= 0) {
-			this.x = x * 8
-			this.y = y * 18
+		if (x >= 0 && y >= 0) {
+			this.x = x
+			this.y = y
 		}
 	}
 
 	public async rset(x: number, y: number) {
 		const window_props = storeToRefs(GlobalStore())
 		const { lines, active_tab } = storeToRefs(EditorState())
-		const newx = x * 8
-		const newy = y * 18
-		if (y && (this.y + newy) / 18 > window_props.editor_down_height.value - 2) {
+		const newx = x
+		const newy = y
+		if (y && (this.y + newy) > window_props.editor_down_height.value - 2) {
 			lines.value.splice(0, 1)
 			const line_number = window_props.editor_top_height.value + window_props.editor_down_height.value
 			const new_line = await invoke<string[]>("file_lines", {
@@ -47,7 +46,7 @@ export class Cursor {
 				window_props.editor_top_height.value -= 1
 			}
 		}
-		else if (this.x + newx >= 40 && this.y + newy >= 0) {
+		else if (this.x + newx >= 0 && this.y + newy >= 0) {
 			this.x += newx
 			this.y += newy
 		}

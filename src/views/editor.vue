@@ -28,7 +28,7 @@ onkeydown = async (event) => {
 function move_cursor(event: MouseEvent) {
 	const element = document.getElementById("lines")
 	const rect = element?.getBoundingClientRect()
-	store.cursor.set(Math.floor((event.x - rect!.left) / 8), Math.floor((event.y - rect!.top) / 18))
+	store.cursor.set(Math.floor((event.x - rect!.left - 39) / 9), Math.floor((event.y - rect!.top) / 18))
 }
 
 </script>

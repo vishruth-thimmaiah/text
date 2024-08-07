@@ -1,5 +1,5 @@
 <template>
-	<div id="cursor" :style="`left: ${cursor.x}px; top: ${cursor.y}px`" :class="vim_mode"></div>
+	<div id="cursor" :style="`left: calc(${cursor.x}ch + 39px); top: ${cursor.y * 2}ch`" :class="vim_mode" />
 </template>
 
 <script setup lang="ts">
