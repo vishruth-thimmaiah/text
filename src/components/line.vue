@@ -5,7 +5,7 @@
 				Math.abs(lineNumber! - cursor.y) : lineNumber! + editor_top_height + 1
 		}}
 		</span>
-		<span>{{ text }}</span>
+		<span>{{ text?.replace(" ", "&nbsp;") }}</span>
 	</span>
 </template>
 
@@ -31,6 +31,7 @@ span {
 	letter-spacing: 2px;
 	text-wrap: nowrap;
 	line-height: 18px;
+	white-space-collapse: break-spaces;
 
 	.line_number {
 		width: 28px;

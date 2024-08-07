@@ -102,3 +102,32 @@ pub fn add_chars(
     rope.write_to(File::create(&file.filepath).unwrap())
         .unwrap();
 }
+
+#[tauri::command]
+pub fn remove_chars(
+    file_index: usize,
+    count: usize,
+    start_line: usize,
+    start_point: usize,
+    state: State<'_, Mutex<InnerAppState>>,
+) {
+    let files = &state.lock().unwrap();
+    let file = files.files.get(file_index).unwrap();
+    let mut rope = file.rope.lock().unwrap();
+    let line_index = rope.line_to_char(start_line);
+    let line_end_index = rope.line_to_char(start_line + 1);
+
+    let new_line = rope.line(start_line).to_string();
+
+    let new_line = if start_point < count {
+        new_line[start_point..].to_string()
+    } else {
+        new_line[0..start_point - count].to_string() + &new_line[start_point..]
+    };
+
+    rope.remove(line_index..line_end_index);
+    rope.insert(line_index, &new_line);
+
+    rope.write_to(File::create(&file.filepath).unwrap())
+        .unwrap();
+}

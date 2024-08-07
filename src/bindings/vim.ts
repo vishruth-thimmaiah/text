@@ -85,7 +85,17 @@ async function insert(key: string) {
 	if (key.length === 1) {
 		binds.insert_char(key)
 
-	} else if (key === "Escape") {
+	}
+
+	else if (key === "Enter") {
+		binds.newline()
+	}
+
+	else if (key === "Backspace") {
+		binds.remove_char()
+	}
+
+	else if (key === "Escape") {
 		binds.save_file()
 	}
 }
@@ -102,7 +112,7 @@ function command(key: string) {
 		case "Enter":
 			if (command.value.match(/(\d)+/)) {
 				const { cursor } = storeToRefs(EditorState())
-				cursor.value.set(5, Number(command.value)-1)
+				cursor.value.set(5, Number(command.value) - 1)
 			}
 			store.change_vim_mode(VimModes.Normal)
 			command.value = ""

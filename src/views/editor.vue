@@ -40,8 +40,7 @@ function move_cursor(event: MouseEvent) {
 	right: 0;
 	top: 1.5em;
 	bottom: 1em;
-	margin: 0.5em;
-	margin-left: 0;
+	margin: 0.5em 0;
 	overflow-y: hidden;
 }
 
