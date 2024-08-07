@@ -1,6 +1,6 @@
 <template>
 	<div class="topbar">
-		<div v-for="(tab, index) in tabs">
+		<div :class="index === active_tab ? 'active' : ''" v-for="(tab, index) in tabs">
 			<label @click="open_existing_file(index)">{{ tab }}</label>
 			<button @click="close_file(index)">×</button>
 		</div>
@@ -25,6 +25,9 @@ async function close_file(index: number) {
 	if (active_tab.value === index) {
 		active_tab.value -= 1
 		await open_existing_file(active_tab.value)
+	}
+	else if (active_tab.value! >= index) {
+		active_tab.value! -= 1
 	}
 	await invoke<string[]>("close_file", { fileIndex: index })
 }
@@ -68,6 +71,10 @@ async function close_file(index: number) {
 
 		&:hover {
 			background: #555555;
+		}
+
+		&.active {
+			background: #636363;
 		}
 	}
 }

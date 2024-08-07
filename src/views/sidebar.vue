@@ -43,11 +43,17 @@ async function open_file(file: string) {
 	const height = document.getElementById("editor")!.getBoundingClientRect().height
 	editor_down_height.value = Math.ceil(height / 18)
 
-	await invoke("open_file", { filepath: current_dir.value + '/' + file })
-	tabs.value.push(file)
-
-	active_tab.value = tabs.value.length - 1
-	lines.value = await invoke<string[]>("file_lines", { fileIndex: active_tab.value, startPos: 0, endPos: editor_down_height.value })
+	const index = tabs.value.indexOf(file)
+	if (index === -1) {
+		await invoke("open_file", { filepath: current_dir.value + '/' + file })
+		tabs.value.push(file)
+		active_tab.value = tabs.value.length - 1
+		lines.value = await invoke<string[]>("file_lines", { fileIndex: active_tab.value, startPos: 0, endPos: editor_down_height.value })
+	}
+	else {
+		active_tab.value = index
+		lines.value = await invoke<string[]>("file_lines", { fileIndex: index, startPos: 0, endPos: editor_down_height.value })
+	}
 }
 
 </script>
