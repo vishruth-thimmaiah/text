@@ -45,17 +45,11 @@ onMounted(() => {
 
 <style scoped>
 .editor {
-	position: absolute;
-	left: clamp(20rem, 20rem, 25%);
-	right: 0;
-	top: 1.5em;
-	bottom: 1em;
-	margin: 0.5em 0;
+	overflow-x: auto;
 	overflow-y: hidden;
 }
 
 .lines {
-	position: absolute;
 	display: flex;
 	flex-direction: column;
 	top: 0;

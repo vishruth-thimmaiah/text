@@ -58,11 +58,7 @@ async function open_file(file: string) {
 
 <style scoped>
 .sidebar {
-	width: clamp(20rem, 20rem, 25%);
 	background: #121212;
-	position: fixed;
-	top: 1.7em;
-	bottom: 1.5em;
 	z-index: 5;
 }
 

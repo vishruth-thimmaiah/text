@@ -38,6 +38,7 @@ span {
 		padding: 0 2px;
 		background-color: #222222;
 		margin-right: 8px;
+		cursor: default;
 
 	}
 
