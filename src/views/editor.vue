@@ -15,7 +15,7 @@ import { EditorState } from '../state';
 import { vim_bindings } from '../bindings/vim';
 
 const store = EditorState()
-const { lines, cursor, active_tab } = storeToRefs(store)
+const { lines, active_tab } = storeToRefs(store)
 
 
 onkeydown = async (event) => {
@@ -29,15 +29,6 @@ function move_cursor(event: MouseEvent) {
 	const element = document.getElementById("lines")
 	const rect = element?.getBoundingClientRect()
 	store.cursor.set(Math.floor((event.x - rect!.left) / 8), Math.floor((event.y - rect!.top) / 18))
-}
-
-onwheel = async (event) => {
-	if (event.deltaY > 0) {
-		cursor.value.rset(0, 1)
-	}
-	else {
-		cursor.value.rset(0, -1)
-	}
 }
 
 </script>

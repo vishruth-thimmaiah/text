@@ -1,6 +1,10 @@
 <template>
 	<span :class="(cursor.y / 18) === lineNumber ? 'active' : ''">
-		<span class="line_number">{{ lineNumber! + 1 + editor_top_height }}</span>
+		<span class="line_number"> {{
+			cursor.y / 18 !== lineNumber ?
+				Math.abs(lineNumber! - cursor.y / 18) : lineNumber! + 1 + editor_top_height
+		}}
+		</span>
 		<span>{{ text }}</span>
 	</span>
 </template>
@@ -29,8 +33,8 @@ span {
 	line-height: 18px;
 
 	.line_number {
-		width: 30px;
-		padding-left: 2px;
+		width: 28px;
+		padding: 0 2px;
 		background-color: #222222;
 		margin-right: 8px;
 
@@ -40,6 +44,7 @@ span {
 		background-color: #141414;
 
 		.line_number {
+			text-align: right;
 			background-color: inherit;
 		}
 	}

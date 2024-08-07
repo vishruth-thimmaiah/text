@@ -16,6 +16,8 @@ div {
 	width: 1ch;
 	height: 2ch;
 	z-index: 2;
+	/* transition: all 100ms linear; */
+	/* transition-property: left, top; */
 	/* animation: blink 2s step-start 0s infinite; */
 }
 
