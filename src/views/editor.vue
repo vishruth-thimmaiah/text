@@ -1,5 +1,5 @@
 <template>
-	<div id="editor" class="editor">
+	<div @resize="height" id="editor" class="editor" :style="`left: ${show_sidebar ? '' : '0'};`">
 		<Cursor v-if="active_tab !== null" />
 		<div @click="move_cursor" id="lines" class="lines">
 			<Line :text="line" :line-number="index" v-for="(line, index) in lines" />
@@ -11,11 +11,13 @@
 import Line from '../components/line.vue';
 import Cursor from '../components/cursor.vue';
 import { storeToRefs } from 'pinia';
-import { EditorState } from '../state';
+import { EditorState, GlobalStore } from '../state';
 import { vim_bindings } from '../bindings/vim';
+import { onMounted } from 'vue';
 
 const store = EditorState()
 const { lines, active_tab } = storeToRefs(store)
+const { show_sidebar, editor_down_height } = storeToRefs(GlobalStore())
 
 
 onkeydown = async (event) => {
@@ -30,6 +32,14 @@ function move_cursor(event: MouseEvent) {
 	const rect = element?.getBoundingClientRect()
 	store.cursor.set(Math.floor((event.x - rect!.left - 39) / 9), Math.floor((event.y - rect!.top) / 18))
 }
+
+function height() {
+	const height = document.getElementById("editor")!.getBoundingClientRect().height
+	editor_down_height.value = Math.ceil(height / 18)
+}
+onMounted(() => {
+	height()
+})
 
 </script>
 

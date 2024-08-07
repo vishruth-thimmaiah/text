@@ -6,7 +6,7 @@ export enum VimModes {
 }
 
 import { storeToRefs } from 'pinia';
-import { EditorState, VimState } from '../state/index.ts';
+import { EditorState, GlobalStore, VimState } from '../state/index.ts';
 import * as binds from './common.ts'
 
 
@@ -103,16 +103,25 @@ async function insert(key: string) {
 function command(key: string) {
 	const store = VimState()
 	const { command } = storeToRefs(store)
+	const { show_sidebar } = storeToRefs(GlobalStore())
 	switch (key) {
 		case "Escape":
 			store.change_vim_mode(VimModes.Normal)
 			command.value = ""
-
 			break
+		case "Backspace": {
+			command.value = command.value.slice(0, -1)
+			break
+		}
+
 		case "Enter":
 			if (command.value.match(/(\d)+/)) {
 				const { cursor } = storeToRefs(EditorState())
 				cursor.value.set(5, Number(command.value) - 1)
+			}
+			else if (command.value === "Explore") {
+				console.log('test')
+				show_sidebar.value = !show_sidebar.value
 			}
 			store.change_vim_mode(VimModes.Normal)
 			command.value = ""

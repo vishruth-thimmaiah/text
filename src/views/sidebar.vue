@@ -1,8 +1,9 @@
 <template>
-	<div class="sidebar">
+	<div v-show="show_sidebar" class="sidebar">
 		<div class="tools">
 			<label class="curr_dir">{{ current_dir }}</label>
 			<button @click="open_dir" class="open_dir">+</button>
+			<button @click="show_sidebar = !show_sidebar" class="minimise"><</button>
 		</div>
 		<div class="files">
 			<button class="dir" v-for="dir in dirs"> {{ dir }}/</button>
@@ -22,7 +23,7 @@ const dirs = ref<string[]>()
 const files = ref<string[]>()
 const current_dir = ref<string>("")
 
-const { tabs, editor_down_height } = storeToRefs(GlobalStore())
+const { tabs, editor_down_height, show_sidebar } = storeToRefs(GlobalStore())
 const { lines, active_tab } = storeToRefs(EditorState())
 
 
@@ -39,9 +40,6 @@ async function open_dir() {
 }
 
 async function open_file(file: string) {
-
-	const height = document.getElementById("editor")!.getBoundingClientRect().height
-	editor_down_height.value = Math.ceil(height / 18)
 
 	const index = tabs.value.indexOf(file)
 	if (index === -1) {
@@ -72,14 +70,14 @@ async function open_file(file: string) {
 	display: flex;
 	align-items: center;
 
-	.curr_dir {}
-
-	.open_dir {
+	button {
 		background: none;
 		border: 0;
 		color: white;
-		margin-left: auto;
 		font-size: 25px;
+	}
+	.open_dir {
+		margin-left: auto;
 	}
 }
 
