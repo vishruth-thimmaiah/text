@@ -36,6 +36,10 @@ function normal(key: string, ctrl: boolean, alt: boolean) {
 		cmd = ""
 		clearTimeout(timeout)
 	}
+	console.log(localcmd)
+	if (key === "Escape") {
+		return
+	}
 
 	// Globals
 	switch (localcmd + key) {
@@ -46,15 +50,10 @@ function normal(key: string, ctrl: boolean, alt: boolean) {
 		case ":":
 			binds.command_mode()
 			return
-
 	}
 
 	if (focus_on.value === 0) {
 		switch (localcmd + key) {
-
-			case "Escape":
-				localcmd = ""
-				return
 
 			// Motions
 			case "l":

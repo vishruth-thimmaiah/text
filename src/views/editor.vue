@@ -1,6 +1,6 @@
 <template>
-	<div @focusin="focus_on = 0" tabindex="0" @resize="height" id="editor" class="editor"
-		:style="`left: ${show_sidebar ? '' : '0'};`">
+	<div @focusin="focus_on = 0" tabindex="0" @resize="height" id="editor"
+		:class="`editor ${focus_on == 0 ? ' active':''}`" :style="`left: ${show_sidebar ? '' : '0'};`">
 		<Cursor v-if="active_tab !== null" />
 		<div @click="move_cursor" id="lines" class="lines">
 			<Line :text="line" :line-number="index" v-for="(line, index) in lines" />
@@ -56,7 +56,7 @@ onMounted(() => {
 		display: none;
 	}
 
-	&:focus {
+	&.active {
 		border-bottom: lightblue 1px solid;
 
 		.placeholder {
@@ -69,5 +69,14 @@ onMounted(() => {
 	display: flex;
 	flex-direction: column;
 	top: 0;
+
+	&::before {
+		content: '';
+		position: absolute;
+		background-color: #222222;
+		top: 0;
+		bottom: 0;
+		width: 32px;
+	}
 }
 </style>

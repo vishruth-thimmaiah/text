@@ -1,5 +1,6 @@
 <template>
-	<div @focusin="focus_on = 1" v-show="show_sidebar" class="sidebar" id="sidebar" tabindex="0">
+	<div :class="'sidebar' + (focus_on == 1 ? ' active' : '')" id="sidebar" tabindex="0" @focusin="focus_on = 1"
+		v-show="show_sidebar">
 		<div class="tools">
 			<label class="curr_dir">{{ current_dir }}</label>
 			<img @click="open_dir" class="open_dir" src="/svgs/folder-open.svg">
@@ -64,7 +65,7 @@ img {
 	background: #121212;
 	z-index: 5;
 
-	&:focus {
+	&.active {
 		border-bottom: lightblue 1px solid;
 	}
 }

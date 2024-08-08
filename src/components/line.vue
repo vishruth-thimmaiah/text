@@ -50,7 +50,7 @@ span {
 	&.active {
 		background-color: #141414;
 
-	.line {
+		.line {
 			background-color: inherit;
 		}
 
