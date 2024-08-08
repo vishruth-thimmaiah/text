@@ -1,5 +1,6 @@
 <template>
-	<div @resize="height" id="editor" class="editor" :style="`left: ${show_sidebar ? '' : '0'};`">
+	<div @focusin="focus_on = 1" tabindex="0" @resize="height" id="editor" class="editor"
+		:style="`left: ${show_sidebar ? '' : '0'};`">
 		<Cursor v-if="active_tab !== null" />
 		<div @click="move_cursor" id="lines" class="lines">
 			<Line :text="line" :line-number="index" v-for="(line, index) in lines" />
@@ -17,7 +18,7 @@ import { onMounted } from 'vue';
 
 const store = EditorState()
 const { lines, active_tab } = storeToRefs(store)
-const { show_sidebar, editor_down_height } = storeToRefs(GlobalStore())
+const { show_sidebar, editor_down_height, focus_on } = storeToRefs(GlobalStore())
 
 
 onkeydown = async (event) => {
@@ -47,6 +48,18 @@ onMounted(() => {
 .editor {
 	overflow-x: auto;
 	overflow-y: hidden;
+
+	.placeholder {
+		display: none;
+	}
+
+	&:focus {
+		border-bottom: lightblue 1px solid;
+
+		.placeholder {
+			display: initial;
+		}
+	}
 }
 
 .lines {

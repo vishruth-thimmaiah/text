@@ -26,56 +26,68 @@ var cmd = ""
 
 function normal(key: string) {
 	var localcmd = ""
+	const { focus_on } = storeToRefs(GlobalStore())
 
 	if (cmd !== "") {
 		localcmd = cmd
 		cmd = ""
 	}
 
+	// Globals
 	switch (key) {
-		// Motions
-		case "l":
-		case "ArrowRight":
-			binds.move_right()
-			break
-		case "h":
-		case "ArrowLeft":
-			binds.move_left()
-			break
-		case "j":
-		case "ArrowDown":
-			binds.move_down()
-			break
-		case "k":
-		case "ArrowUp":
-			binds.move_up()
-			break
-
-		case "w":
-			binds.next_word()
-			break
-
-		case "b":
-			binds.prev_word()
-			break
-
-		// insert
-		case "i":
-			binds.insert_mode()
-			break
-		case "a":
-			binds.move_right()
-			binds.insert_mode()
-			break
-
-		case ":":
-			binds.command_mode()
-			break
-
-		default:
-			cmd = localcmd + key
-			break
+		// TODO: change this binding once multiple key bindings are supported
+		case "W":
+			binds.cycle_view(focus_on.value)
+			return
 	}
+
+	if (focus_on.value === 1) {
+		switch (key) {
+			// Motions
+			case "l":
+			case "ArrowRight":
+				binds.move_right()
+				break
+			case "h":
+			case "ArrowLeft":
+				binds.move_left()
+				break
+			case "j":
+			case "ArrowDown":
+				binds.move_down()
+				break
+			case "k":
+			case "ArrowUp":
+				binds.move_up()
+				break
+
+			case "w":
+				binds.next_word()
+				break
+
+			case "b":
+				binds.prev_word()
+				break
+
+			// insert
+			case "i":
+				binds.insert_mode()
+				break
+			case "a":
+				binds.move_right()
+				binds.insert_mode()
+				break
+
+			case ":":
+				binds.command_mode()
+				break
+
+			default:
+				cmd = localcmd + key
+				break
+		}
+	}
+
 }
 
 

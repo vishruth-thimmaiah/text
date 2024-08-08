@@ -1,5 +1,5 @@
 <template>
-	<div v-show="show_sidebar" class="sidebar">
+	<div @focusin="focus_on = 2" v-show="show_sidebar" class="sidebar" id="sidebar" tabindex="0">
 		<div class="tools">
 			<label class="curr_dir">{{ current_dir }}</label>
 			<img @click="open_dir" class="open_dir" src="/svgs/folder-open.svg">
@@ -22,7 +22,7 @@ const dirs = ref<string[]>()
 const files = ref<string[]>()
 const current_dir = ref<string>("")
 
-const { tabs, editor_down_height, show_sidebar } = storeToRefs(GlobalStore())
+const { tabs, editor_down_height, show_sidebar, focus_on } = storeToRefs(GlobalStore())
 const { lines, active_tab } = storeToRefs(EditorState())
 
 
@@ -63,6 +63,10 @@ img {
 .sidebar {
 	background: #121212;
 	z-index: 5;
+
+	&:focus {
+		border-bottom: lightblue 1px solid;
+	}
 }
 
 .tools {
@@ -94,6 +98,7 @@ img {
 		margin: 0 5px;
 		border-radius: 5px;
 		transition: background 300ms;
+		user-select: none;
 
 		&:hover {
 			background: #555555;

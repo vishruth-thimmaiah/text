@@ -118,6 +118,12 @@ export function prev_word() {
 	}
 }
 
+export function cycle_view(focused_element: number) {
+	const elements = ["editor", "sidebar"]
+	focused_element = focused_element > 1 ? 0 : focused_element
+	document.getElementById(elements[focused_element])?.focus()
+}
+
 
 export function insert_mode() {
 	const vim = VimState()
