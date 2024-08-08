@@ -39,6 +39,11 @@ function normal(key: string) {
 		case "W":
 			binds.cycle_view(focus_on.value)
 			return
+
+		case ":":
+			binds.command_mode()
+			return
+
 	}
 
 	if (focus_on.value === 1) {
@@ -76,10 +81,6 @@ function normal(key: string) {
 			case "a":
 				binds.move_right()
 				binds.insert_mode()
-				break
-
-			case ":":
-				binds.command_mode()
 				break
 
 			default:
