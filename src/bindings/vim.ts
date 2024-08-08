@@ -10,11 +10,11 @@ import { EditorState, GlobalStore, VimState } from '../state/index.ts';
 import * as binds from './common.ts'
 
 
-export function vim_bindings(key: string) {
+export function vim_bindings(key: string, ctrl: boolean, alt: boolean) {
 	const store = VimState()
 	const { vim_mode } = storeToRefs(store)
 	switch (vim_mode.value) {
-		case VimModes.Normal: normal(key); break
+		case VimModes.Normal: normal(key, ctrl, alt); break
 		case VimModes.Insert: insert(key); break
 		case VimModes.Command: command(key); break
 		// case VimModes.Visual: visual(key); break
@@ -25,8 +25,10 @@ export function vim_bindings(key: string) {
 var cmd = ""
 var timeout: number
 
-function normal(key: string) {
+function normal(key: string, ctrl: boolean, alt: boolean) {
 	var localcmd = ""
+	localcmd += ctrl ? "Control" : ''
+	localcmd += alt ? "Alt" : ''
 	const { focus_on } = storeToRefs(GlobalStore())
 
 	if (cmd !== "") {
@@ -93,7 +95,6 @@ function normal(key: string) {
 
 	cmd = localcmd + key
 	timeout = setTimeout(() => {
-		console.log(cmd)
 		cmd = ""
 	}, 3000)
 

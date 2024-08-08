@@ -22,8 +22,11 @@ const { show_sidebar, editor_down_height, focus_on } = storeToRefs(GlobalStore()
 
 
 onkeydown = async (event) => {
+	if (["Super", "Control", "Alt", "Shift"].includes(event.key)) {
+		return
+	}
 	document.getElementById("keystrokes")!.textContent = event.key
-	vim_bindings(event.key)
+	vim_bindings(event.key, event.ctrlKey, event.metaKey)
 
 	event.preventDefault()
 }
