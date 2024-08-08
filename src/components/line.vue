@@ -5,7 +5,7 @@
 				Math.abs(lineNumber! - cursor.y) : lineNumber! + editor_top_height + 1
 		}}
 		</span>
-		<span>{{ text?.replace(" ", "&nbsp;") }}</span>
+		<span class="line">{{ text }}</span>
 	</span>
 </template>
 
@@ -34,6 +34,7 @@ span {
 	white-space-collapse: break-spaces;
 
 	.line_number {
+		position: absolute;
 		width: 28px;
 		padding: 0 2px;
 		background-color: #222222;
@@ -42,8 +43,16 @@ span {
 
 	}
 
+	.line {
+		margin-left: 40px;
+	}
+
 	&.active {
 		background-color: #141414;
+
+	.line {
+			background-color: inherit;
+		}
 
 		.line_number {
 			text-align: right;
