@@ -100,10 +100,17 @@ async function insert(key: string) {
 	}
 }
 
+function toggle() {
+	const { show_sidebar } = storeToRefs(GlobalStore())
+	show_sidebar.value = !show_sidebar.value
+}
+
+const commands = new Map<string, Function>()
+commands.set("Explore", toggle)
+
 function command(key: string) {
 	const store = VimState()
 	const { command } = storeToRefs(store)
-	const { show_sidebar } = storeToRefs(GlobalStore())
 	switch (key) {
 		case "Escape":
 			store.change_vim_mode(VimModes.Normal)
@@ -115,13 +122,13 @@ function command(key: string) {
 		}
 
 		case "Enter":
-			if (command.value.match(/(\d)+/)) {
+			const c = commands.get(command.value)
+			if (c !== undefined) {
+				c()
+			}
+			else if (command.value.match(/(\d)+/)) {
 				const { cursor } = storeToRefs(EditorState())
 				cursor.value.set(5, Number(command.value) - 1)
-			}
-			else if (command.value === "Explore") {
-				console.log('test')
-				show_sidebar.value = !show_sidebar.value
 			}
 			store.change_vim_mode(VimModes.Normal)
 			command.value = ""
