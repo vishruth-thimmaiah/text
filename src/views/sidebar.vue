@@ -2,8 +2,7 @@
 	<div v-show="show_sidebar" class="sidebar">
 		<div class="tools">
 			<label class="curr_dir">{{ current_dir }}</label>
-			<button @click="open_dir" class="open_dir">+</button>
-			<button @click="show_sidebar = !show_sidebar" class="minimise"><</button>
+			<img @click="open_dir" class="open_dir" src="/svgs/folder-open.svg">
 		</div>
 		<div class="files">
 			<button class="dir" v-for="dir in dirs"> {{ dir }}/</button>
@@ -57,6 +56,10 @@ async function open_file(file: string) {
 </script>
 
 <style scoped>
+img {
+	width: 2ch;
+}
+
 .sidebar {
 	background: #121212;
 	z-index: 5;
@@ -65,13 +68,14 @@ async function open_file(file: string) {
 .tools {
 	display: flex;
 	align-items: center;
+	margin: 5px;
 
-	button {
-		background: none;
-		border: 0;
-		color: white;
-		font-size: 25px;
+	.curr_dir {
+		text-wrap: nowrap;
+		overflow-x: auto;
+		margin-right: 5px;
 	}
+
 	.open_dir {
 		margin-left: auto;
 	}
