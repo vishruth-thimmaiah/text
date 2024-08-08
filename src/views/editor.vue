@@ -1,5 +1,5 @@
 <template>
-	<div @focusin="focus_on = 1" tabindex="0" @resize="height" id="editor" class="editor"
+	<div @focusin="focus_on = 0" tabindex="0" @resize="height" id="editor" class="editor"
 		:style="`left: ${show_sidebar ? '' : '0'};`">
 		<Cursor v-if="active_tab !== null" />
 		<div @click="move_cursor" id="lines" class="lines">

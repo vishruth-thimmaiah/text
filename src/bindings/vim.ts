@@ -23,6 +23,7 @@ export function vim_bindings(key: string) {
 
 
 var cmd = ""
+var timeout: number
 
 function normal(key: string) {
 	var localcmd = ""
@@ -31,12 +32,12 @@ function normal(key: string) {
 	if (cmd !== "") {
 		localcmd = cmd
 		cmd = ""
+		clearTimeout(timeout)
 	}
 
 	// Globals
-	switch (key) {
-		// TODO: change this binding once multiple key bindings are supported
-		case "W":
+	switch (localcmd + key) {
+		case "Controlww":
 			binds.cycle_view(focus_on.value)
 			return
 
@@ -46,48 +47,55 @@ function normal(key: string) {
 
 	}
 
-	if (focus_on.value === 1) {
-		switch (key) {
+	if (focus_on.value === 0) {
+		switch (localcmd + key) {
+
+			case "Escape":
+				localcmd = ""
+				return
+
 			// Motions
 			case "l":
 			case "ArrowRight":
 				binds.move_right()
-				break
+				return
 			case "h":
 			case "ArrowLeft":
 				binds.move_left()
-				break
+				return
 			case "j":
 			case "ArrowDown":
 				binds.move_down()
-				break
+				return
 			case "k":
 			case "ArrowUp":
 				binds.move_up()
-				break
+				return
 
 			case "w":
 				binds.next_word()
-				break
+				return
 
 			case "b":
 				binds.prev_word()
-				break
+				return
 
 			// insert
 			case "i":
 				binds.insert_mode()
-				break
+				return
 			case "a":
 				binds.move_right()
 				binds.insert_mode()
-				break
-
-			default:
-				cmd = localcmd + key
-				break
+				return
 		}
 	}
+
+	cmd = localcmd + key
+	timeout = setTimeout(() => {
+		console.log(cmd)
+		cmd = ""
+	}, 3000)
 
 }
 

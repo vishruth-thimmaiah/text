@@ -1,5 +1,5 @@
 <template>
-	<div @focusin="focus_on = 2" v-show="show_sidebar" class="sidebar" id="sidebar" tabindex="0">
+	<div @focusin="focus_on = 1" v-show="show_sidebar" class="sidebar" id="sidebar" tabindex="0">
 		<div class="tools">
 			<label class="curr_dir">{{ current_dir }}</label>
 			<img @click="open_dir" class="open_dir" src="/svgs/folder-open.svg">
