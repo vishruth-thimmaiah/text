@@ -49,10 +49,11 @@ async function open_dir(dir?: string) {
 
 async function open_file(file: string) {
 
-	const index = tabs.value.indexOf(file)
+	const file_name = file.split('/').pop()!
+	const index = tabs.value.indexOf(file_name)
 	if (index === -1) {
 		await invoke("open_file", { filepath: file })
-		tabs.value.push(file.split('/').pop() || '')
+		tabs.value.push(file_name)
 		active_tab.value = tabs.value.length - 1
 		lines.value = await invoke<string[]>("file_lines", { fileIndex: active_tab.value, startPos: 0, endPos: editor_down_height.value })
 	}
