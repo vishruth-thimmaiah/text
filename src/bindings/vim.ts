@@ -39,7 +39,6 @@ function normal(key: string, ctrl: boolean, alt: boolean) {
 		cmd = ""
 		clearTimeout(timeout)
 	}
-	console.log(localcmd)
 	if (key === "Escape") {
 		document.getElementById("keystrokes")!.textContent = ""
 		return
