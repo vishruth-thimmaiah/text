@@ -11,6 +11,9 @@ import * as binds from './common.ts'
 
 
 export function vim_bindings(key: string, ctrl: boolean, alt: boolean) {
+
+	document.getElementById("keystrokes")!.textContent = cmd + key
+
 	const store = VimState()
 	const { vim_mode } = storeToRefs(store)
 	switch (vim_mode.value) {
@@ -38,6 +41,7 @@ function normal(key: string, ctrl: boolean, alt: boolean) {
 	}
 	console.log(localcmd)
 	if (key === "Escape") {
+		document.getElementById("keystrokes")!.textContent = ""
 		return
 	}
 

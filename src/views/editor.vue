@@ -15,7 +15,6 @@ import { storeToRefs } from 'pinia';
 import { EditorState, GlobalStore } from '../state';
 import { vim_bindings } from '../bindings/vim';
 import { onMounted } from 'vue';
-import { invoke } from '@tauri-apps/api';
 
 const store = EditorState()
 const { lines, active_tab } = storeToRefs(store)
@@ -26,7 +25,6 @@ onkeydown = async (event) => {
 	if (["Super", "Control", "Alt", "Shift"].includes(event.key)) {
 		return
 	}
-	document.getElementById("keystrokes")!.textContent = event.key
 	vim_bindings(event.key, event.ctrlKey, event.metaKey)
 
 	event.preventDefault()

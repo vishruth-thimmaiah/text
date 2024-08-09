@@ -26,16 +26,6 @@ const current_dir = ref<string>("")
 const { tabs, editor_down_height, show_sidebar, focus_on } = storeToRefs(GlobalStore())
 const { lines, active_tab } = storeToRefs(EditorState())
 
-onMounted(async () => {
-	const response = await invoke<{ active_dir: string, files: string[] }>("load_prev_state")
-	if (response.active_dir) {
-		open_dir(response.active_dir)
-		for (const file of response.files) {
-			open_file(file)
-		}
-	}
-})
-
 async function open_file_picker(): Promise<string | undefined> {
 	const selected = await open({ directory: true })
 	if (Array.isArray(selected)) {
@@ -71,6 +61,17 @@ async function open_file(file: string) {
 		lines.value = await invoke<string[]>("file_lines", { fileIndex: index, startPos: 0, endPos: editor_down_height.value })
 	}
 }
+
+
+onMounted(async () => {
+	const response = await invoke<{ active_dir: string, files: string[] }>("load_prev_state")
+	if (response.active_dir) {
+		open_dir(response.active_dir)
+		for (const file of response.files) {
+			open_file(file)
+		}
+	}
+})
 
 </script>
 
