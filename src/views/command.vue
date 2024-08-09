@@ -1,32 +1,48 @@
 <template>
-	<label v-if="vim_mode === VimModes.Command" id="command">:{{ command }}</label>
+	<div v-if="vim_mode === VimModes.Command" id="command">
+		<label class="cmd_display">:{{ command }}</label>
+		<hr>
+		<div class="options" v-for="command in ref_command_list">
+			<label>{{ command }}</label>
+		</div>
+	</div>
 </template>
 
 <script setup lang="ts">
 import { storeToRefs } from 'pinia';
 import { VimState } from '../state';
 import { VimModes } from '../bindings/vim';
-
+import { ref_command_list } from '../bindings/vim';
 
 const { vim_mode, command } = storeToRefs(VimState())
 </script>
 
 <style scoped>
-label {
-	align-content: center;
+#command {
 	position: fixed;
-	height: 40px;
-	width: 450px;
 	top: 45px;
 	right: 20px;
+	width: 450px;
 	z-index: 20;
-	background-color: var(--command_menu_background);
+	padding: 10px;
 	color: var(--command_menu_foreground);
 	border: var(--accent_color) 2px solid;
-	color: white;
 	border-radius: 10px;
-	font-size: 16px;
-	font-family: monospace;
-	padding: 5px;
+	background-color: var(--command_menu_background);
+
+	.cmd_display {
+		align-content: center;
+		font-size: 16px;
+		font-family: monospace;
+	}
+
+	.options {
+		background-color: var(--command_menu_background);
+		list-style: none;
+		margin: 0;
+		padding: 10px;
+
+	}
+
 }
 </style>

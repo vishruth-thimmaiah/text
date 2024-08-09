@@ -1,6 +1,5 @@
 use std::fs;
 
-use serde::{Deserialize, Serialize};
 use toml::Table;
 
 // #[derive(Debug, Deserialize, Serialize)]

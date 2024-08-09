@@ -45,7 +45,8 @@ invoke<Object | null>("load_theme").then(function (res) {
 	grid-area: sidebar;
 	resize: horizontal;
 	overflow: auto;
-	min-width: 30vw;
+	min-width: 20vw;
+	width: 30vw;
 	max-width: 50vw;
 }
 

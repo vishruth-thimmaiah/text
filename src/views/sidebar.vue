@@ -5,6 +5,7 @@
 			<label class="curr_dir">{{ current_dir }}</label>
 			<img @click="open_dir()" class="open_dir" src="/svgs/folder-open.svg">
 		</div>
+		<hr>
 		<div class="files">
 			<button class="dir" v-for="dir in dirs"> {{ dir }}/</button>
 			<button @click="open_file(current_dir + '/' + file)" class="file" v-for="file in files"> {{ file }}</button>

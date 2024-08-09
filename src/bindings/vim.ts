@@ -8,6 +8,7 @@ export enum VimModes {
 import { storeToRefs } from 'pinia';
 import { EditorState, GlobalStore, VimState } from '../state/index.ts';
 import * as binds from './common.ts'
+import { ref } from 'vue';
 
 
 export function vim_bindings(key: string, ctrl: boolean, alt: boolean) {
@@ -131,6 +132,8 @@ function toggle() {
 
 const commands = new Map<string, Function>()
 commands.set("Explore", toggle)
+const command_list = Array.from(commands.keys())
+export const ref_command_list = ref(command_list)
 
 function command(key: string) {
 	const store = VimState()
@@ -139,6 +142,7 @@ function command(key: string) {
 		case "Escape":
 			store.change_vim_mode(VimModes.Normal)
 			command.value = ""
+			ref_command_list.value = command_list
 			break
 		case "Backspace": {
 			command.value = command.value.slice(0, -1)
@@ -154,6 +158,8 @@ function command(key: string) {
 				const { cursor } = storeToRefs(EditorState())
 				cursor.value.set(5, Number(command.value) - 1)
 			}
+
+			ref_command_list.value = command_list
 			store.change_vim_mode(VimModes.Normal)
 			command.value = ""
 			break
@@ -161,6 +167,13 @@ function command(key: string) {
 		default:
 			if (key.length === 1) {
 				command.value += key
+				//TODO replace with a better sort function
+				ref_command_list.value = []
+				for (const cmd of command_list) {
+					if (cmd.toLowerCase().match(command.value)) {
+						ref_command_list.value.push(cmd)
+					}
+				}
 			}
 			break
 	}
