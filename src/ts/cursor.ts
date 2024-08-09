@@ -18,7 +18,7 @@ export class Cursor {
 		if (lines.value[y][x]) {
 			return { valid: true }
 		}
-		var len = lines.value[y].length
+		var len = lines.value[y].length - 1
 		len = len >= 0 ? len : 0
 		return { valid: false, x: len }
 	}
@@ -29,7 +29,7 @@ export class Cursor {
 			if (isValid.valid === true) {
 				this.x = x
 			} else {
-				this.x = isValid.x! - 1
+				this.x = isValid.x!
 			}
 
 			this.y = y
