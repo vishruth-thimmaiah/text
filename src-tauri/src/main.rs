@@ -4,7 +4,10 @@
 mod config;
 mod editor;
 
-use config::local::{load_prev_state, save_state};
+use config::{
+    local::{load_prev_state, save_state},
+    themes::load_theme,
+};
 use editor::file::{add_chars, close_file, file_lines, list_files, open_file, remove_chars};
 use serde::Serialize;
 use std::sync::Mutex;
@@ -47,7 +50,8 @@ fn main() {
             list_files,
             close_file,
             remove_chars,
-            load_prev_state
+            load_prev_state,
+            load_theme
         ])
         .build(tauri::generate_context!())
         .expect("error while running application")

@@ -26,7 +26,8 @@ img {
 	right: 0;
 	bottom: 0;
 	height: 2em;
-	background: #181818;
+	background-color: var(--footer_background);
+	color: var(--footer_foreground);
 	display: flex;
 	z-index: 10;
 	font-size: 12px;

@@ -20,7 +20,9 @@ label {
 	top: 45px;
 	right: 20px;
 	z-index: 20;
-	background-color: #161616;
+	background-color: var(--command_menu_background);
+	color: var(--command_menu_foreground);
+	border: var(--accent_color) 2px solid;
 	color: white;
 	border-radius: 10px;
 	font-size: 16px;

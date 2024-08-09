@@ -14,6 +14,17 @@ import Topbar from './views/topbar.vue';
 import Footer from './views/footer.vue';
 import Sidebar from './views/sidebar.vue';
 import Command from './views/command.vue';
+import { invoke } from '@tauri-apps/api';
+
+var root = document.querySelector(':root') as HTMLElement;
+invoke<Object | null>("load_theme").then(function (res) {
+	if (res) {
+		const styles = new Map(Object.entries(res))
+		for (const [key, val] of styles) {
+			root.style.setProperty(`--${key}`, val)
+		}
+	}
+})
 </script>
 
 <style scoped>

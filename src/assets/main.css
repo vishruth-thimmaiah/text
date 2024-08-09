@@ -1,11 +1,36 @@
+:root {
+	--editor_background: #2f2f2f;
+	--editor_foreground: #f6f6f6;
+	--editor_background_line_numbers: #222222;
+	--editor_foreground_line_numbers: #222222;
+	--editor_background_line: #141414;
+	--sidebar_background: #121212;
+	--sidebar_foreground: #f6f6f6;
+	--sidebar_file_background: #555555;
+	--topbar_background: #181818;
+	--topbar_foreground: #f6f6f6;
+	--topbar_tabs: #333333;
+	--topbar_tabs_active: #636363;
+	--topbar_tabs_hover: #555555;
+	--footer_background: #181818;
+	--footer_foreground: #f6f6f6;
+	--accent_color: lightblue;
+	--command_menu_background: #161616;
+	--command_menu_foreground: #161616;
+	--cursor_normal: #ffffff88;
+	--cursor_insert: #ffffff;
+	--cursor_replace: #ffffff;
+}
+
+
 body {
 	margin: 0;
 }
 
 @media (prefers-color-scheme: dark) {
 	body {
-		color: #f6f6f6;
-		background-color: #2f2f2f;
+		color: var(--editor_foreground);
+		background-color: var(--editor_background);
 	}
 
 }

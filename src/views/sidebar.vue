@@ -82,11 +82,12 @@ img {
 }
 
 .sidebar {
-	background: #121212;
+	background-color: var(--sidebar_background);
+	color: var(--sidebar_foreground);
 	z-index: 5;
 
 	&.active {
-		border-bottom: lightblue 1px solid;
+		border-bottom: var(--accent_color) 1px solid;
 	}
 }
 
@@ -122,7 +123,7 @@ img {
 		user-select: none;
 
 		&:hover {
-			background: #555555;
+			background: var(--sidebar_file_background);
 		}
 	}
 }

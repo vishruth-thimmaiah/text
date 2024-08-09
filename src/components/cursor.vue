@@ -29,15 +29,15 @@ const { vim_mode } = storeToRefs(VimState())
 }
 
 .normal {
-	background: #ffffff88;
+	background: var(--cursor_normal);
 }
 
 .insert {
-	border-left: 1px white solid;
+	border-left: 1px var(--cursor_insert) solid;
 }
 
 .replace {
-	border-bottom: 1px white solid;
+	border-bottom: 1px var(--cursor_replace) solid;
 }
 
 @keyframes blink {

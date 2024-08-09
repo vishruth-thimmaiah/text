@@ -37,7 +37,6 @@ span {
 		position: absolute;
 		width: 28px;
 		padding: 0 2px;
-		background-color: #222222;
 		margin-right: 8px;
 		cursor: default;
 
@@ -48,7 +47,7 @@ span {
 	}
 
 	&.active {
-		background-color: #141414;
+		background-color: var(--editor_background_line);
 
 		.line {
 			background-color: inherit;
@@ -57,6 +56,7 @@ span {
 		.line_number {
 			text-align: right;
 			background-color: inherit;
+			color: var(--accent_color);
 		}
 	}
 }

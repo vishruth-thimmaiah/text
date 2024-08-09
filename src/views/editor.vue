@@ -56,7 +56,7 @@ onMounted(async () => {
 	}
 
 	&.active {
-		border-bottom: lightblue 1px solid;
+		border-bottom: var(--accent_color) 1px solid;
 
 		.placeholder {
 			display: initial;
@@ -72,7 +72,7 @@ onMounted(async () => {
 	&::before {
 		content: '';
 		position: absolute;
-		background-color: #222222;
+		background-color: var(--editor_background_line_numbers);
 		top: 0;
 		bottom: 0;
 		width: 32px;

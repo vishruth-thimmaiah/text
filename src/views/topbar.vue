@@ -41,12 +41,13 @@ async function close_file(index: number) {
 	right: 0;
 	top: 0;
 	height: 2em;
-	background: #181818;
+	background-color: var(--topbar_background);
+	color: var(--topbar_foreground);
 	z-index: 10;
 	display: flex;
 
 	div {
-		background: #333333;
+		background: var(--topbar_tabs);
 		font-size: 14px;
 		margin: 4px 2px;
 		border-radius: 5px;
@@ -70,11 +71,11 @@ async function close_file(index: number) {
 		}
 
 		&:hover {
-			background: #555555;
+			background-color: var(--topbar_tabs_hover);
 		}
 
 		&.active {
-			background: #636363;
+			background-color: var(--topbar_tabs_active);
 		}
 	}
 }
