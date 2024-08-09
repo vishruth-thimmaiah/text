@@ -36,44 +36,52 @@ export class Cursor {
 		}
 	}
 
-	public async rset(x: number, y: number) {
+	async scroll_down() {
 		const window_props = storeToRefs(GlobalStore())
 		const { lines, active_tab } = storeToRefs(EditorState())
+		const line_number = window_props.editor_top_height.value + window_props.editor_down_height.value
+		const line = await invoke<string[]>("file_lines", {
+			fileIndex: active_tab.value, startPos: line_number, endPos: line_number + 1
+		})
+		if (line[0]) {
+			lines.value.splice(0, 1)
+			lines.value.push(line[0])
+			window_props.editor_top_height.value += 1
+		}
+	}
 
-		//Scroll Down
-		if ((this.y + y) > window_props.editor_down_height.value - 2) {
-			const line_number = window_props.editor_top_height.value + window_props.editor_down_height.value
+	async scroll_up() {
+		const window_props = storeToRefs(GlobalStore())
+		const { lines, active_tab } = storeToRefs(EditorState())
+		const line_number = window_props.editor_top_height.value - 1
+		if (line_number >= 0) {
 			const line = await invoke<string[]>("file_lines", {
 				fileIndex: active_tab.value, startPos: line_number, endPos: line_number + 1
 			})
-			if (line[0]) {
-				lines.value.splice(0, 1)
-				lines.value.push(line[0])
-				window_props.editor_top_height.value += 1
-			}
+			lines.value.splice(window_props.editor_down_height.value, 1)
+			lines.value.splice(0, 0, line[0])
+			window_props.editor_top_height.value -= 1
 		}
-		//Scroll Up
+	}
+
+	public async rset(x: number, y: number) {
+		const window_props = storeToRefs(GlobalStore())
+
+		if ((this.y + y) > window_props.editor_down_height.value - 1) {
+			await this.scroll_down()
+		}
 		else if (this.y + y < 0) {
-
-			const line_number = window_props.editor_top_height.value - 1
-			if (line_number >= 0) {
-				const line = await invoke<string[]>("file_lines", {
-					fileIndex: active_tab.value, startPos: line_number, endPos: line_number + 1
-				})
-				lines.value.splice(window_props.editor_down_height.value, 1)
-				lines.value.splice(0, 0, line[0])
-				window_props.editor_top_height.value -= 1
-			}
+			await this.scroll_up()
 		}
-		else if (this.x + x >= 0 && this.y + y >= 0) {
-			const isValid = this.isValid(this.x + x, this.y + y)
-			if (isValid.valid === true) {
-				this.x += x
 
-			} else {
-				this.x = isValid.x!
-			}
+		else if (this.x + x >= 0 && this.y + y >= 0) {
+			this.x += x
 			this.y += y
+		}
+
+		const isValid = this.isValid(this.x, this.y)
+		if (isValid.valid !== true) {
+			this.x = isValid.x!
 		}
 	}
 }

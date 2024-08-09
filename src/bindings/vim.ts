@@ -150,17 +150,17 @@ function command(key: string) {
 		}
 
 		case "Enter":
+			store.change_vim_mode(VimModes.Normal)
+			ref_command_list.value = command_list
 			const c = commands.get(command.value)
 			if (c !== undefined) {
 				c()
 			}
 			else if (command.value.match(/(\d)+/)) {
 				const { cursor } = storeToRefs(EditorState())
-				cursor.value.set(5, Number(command.value) - 1)
+				cursor.value.set(0, Number(command.value) - 1)
 			}
 
-			ref_command_list.value = command_list
-			store.change_vim_mode(VimModes.Normal)
 			command.value = ""
 			break
 

@@ -38,7 +38,7 @@ function move_cursor(event: MouseEvent) {
 
 function height() {
 	const height = document.getElementById("editor")!.getBoundingClientRect().height
-	editor_down_height.value = Math.ceil(height / 18)
+	editor_down_height.value = Math.floor(height / 18)
 }
 onMounted(async () => {
 	height()
