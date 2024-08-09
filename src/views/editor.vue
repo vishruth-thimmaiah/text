@@ -1,6 +1,6 @@
 <template>
 	<div @focusin="focus_on = 0" tabindex="0" @resize="height" id="editor"
-		:class="`editor ${focus_on == 0 ? ' active':''}`" :style="`left: ${show_sidebar ? '' : '0'};`">
+		:class="`editor ${focus_on == 0 ? ' active' : ''}`" :style="`left: ${show_sidebar ? '' : '0'};`">
 		<Cursor v-if="active_tab !== null" />
 		<div @click="move_cursor" id="lines" class="lines">
 			<Line :text="line" :line-number="index" v-for="(line, index) in lines" />
@@ -15,6 +15,7 @@ import { storeToRefs } from 'pinia';
 import { EditorState, GlobalStore } from '../state';
 import { vim_bindings } from '../bindings/vim';
 import { onMounted } from 'vue';
+import { invoke } from '@tauri-apps/api';
 
 const store = EditorState()
 const { lines, active_tab } = storeToRefs(store)
@@ -41,7 +42,7 @@ function height() {
 	const height = document.getElementById("editor")!.getBoundingClientRect().height
 	editor_down_height.value = Math.ceil(height / 18)
 }
-onMounted(() => {
+onMounted(async () => {
 	height()
 })
 

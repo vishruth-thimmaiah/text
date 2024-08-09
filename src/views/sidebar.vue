@@ -3,17 +3,17 @@
 		v-show="show_sidebar">
 		<div class="tools">
 			<label class="curr_dir">{{ current_dir }}</label>
-			<img @click="open_dir" class="open_dir" src="/svgs/folder-open.svg">
+			<img @click="open_dir()" class="open_dir" src="/svgs/folder-open.svg">
 		</div>
 		<div class="files">
 			<button class="dir" v-for="dir in dirs"> {{ dir }}/</button>
-			<button @click="open_file(file)" class="file" v-for="file in files"> {{ file }}</button>
+			<button @click="open_file(current_dir + '/' + file)" class="file" v-for="file in files"> {{ file }}</button>
 		</div>
 	</div>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue';
 import { open } from '@tauri-apps/api/dialog';
 import { invoke } from '@tauri-apps/api';
 import { storeToRefs } from 'pinia';
@@ -26,14 +26,32 @@ const current_dir = ref<string>("")
 const { tabs, editor_down_height, show_sidebar, focus_on } = storeToRefs(GlobalStore())
 const { lines, active_tab } = storeToRefs(EditorState())
 
+onMounted(async () => {
+	const response = await invoke<{ active_dir: string, files: string[] }>("load_prev_state")
+	if (response.active_dir) {
+		open_dir(response.active_dir)
+		for (const file of response.files) {
+			open_file(file)
+		}
+	}
+})
 
-async function open_dir() {
+async function open_file_picker(): Promise<string | undefined> {
 	const selected = await open({ directory: true })
 	if (Array.isArray(selected)) {
 		console.warn("not supported")
 	} else if (selected !== null) {
-		current_dir.value = selected
-		const children = await invoke<string[][]>("list_files", { dir: selected })
+		return selected
+	}
+	return undefined
+}
+
+
+async function open_dir(dir?: string) {
+	dir = dir || await open_file_picker()
+	if (dir) {
+		current_dir.value = dir
+		const children = await invoke<string[][]>("list_files", { dir: dir })
 		files.value = children[0]
 		dirs.value = children[1]
 	}
@@ -43,8 +61,8 @@ async function open_file(file: string) {
 
 	const index = tabs.value.indexOf(file)
 	if (index === -1) {
-		await invoke("open_file", { filepath: current_dir.value + '/' + file })
-		tabs.value.push(file)
+		await invoke("open_file", { filepath: file })
+		tabs.value.push(file.split('/').pop() || '')
 		active_tab.value = tabs.value.length - 1
 		lines.value = await invoke<string[]>("file_lines", { fileIndex: active_tab.value, startPos: 0, endPos: editor_down_height.value })
 	}

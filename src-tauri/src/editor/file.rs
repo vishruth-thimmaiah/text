@@ -38,8 +38,8 @@ pub fn list_files(
 
 #[tauri::command]
 pub fn open_file(filepath: String, state: State<'_, Mutex<InnerAppState>>) {
+    println!("{}", filepath);
     let rope = ropey::Rope::from_reader(File::open(&filepath).unwrap()).unwrap();
-
     state.lock().unwrap().files.push(OpenFiles {
         filepath,
         rope: Mutex::new(rope),
