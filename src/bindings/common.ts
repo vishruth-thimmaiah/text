@@ -137,3 +137,12 @@ export function command_mode() {
 	const vim = VimState()
 	vim.change_vim_mode(VimModes.Command)
 }
+export async function close_tab() {
+	const { active_tab, lines } = storeToRefs(EditorState())
+	const { tabs, editor_down_height } = storeToRefs(GlobalStore())
+	tabs.value.splice(active_tab.value!, 1)
+	invoke<string[]>("close_file", { fileIndex: active_tab.value })
+	active_tab.value! -= 1
+
+	lines.value = await invoke<string[]>("file_lines", { fileIndex: active_tab.value, startPos: 0, endPos: editor_down_height.value })
+}

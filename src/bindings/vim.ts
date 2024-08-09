@@ -93,13 +93,17 @@ function normal(key: string, ctrl: boolean, alt: boolean) {
 				binds.move_right()
 				binds.insert_mode()
 				return
+
+			case "ZZ":
+				binds.close_tab()
+				return
 		}
 	}
 
 	cmd = localcmd + key
 	timeout = setTimeout(() => {
 		cmd = ""
-	}, 3000)
+	}, 1500)
 
 }
 
