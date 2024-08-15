@@ -45,6 +45,8 @@ async function close_file(index: number) {
 	color: var(--topbar_foreground);
 	z-index: 10;
 	display: flex;
+	user-select: none;
+	-webkit-user-select: none;
 
 	div {
 		background: var(--topbar_tabs);

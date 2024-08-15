@@ -32,6 +32,8 @@ img {
 	z-index: 10;
 	font-size: 12px;
 	align-items: center;
+	user-select: none;
+	-webkit-user-select: none;
 }
 
 #keystrokes {

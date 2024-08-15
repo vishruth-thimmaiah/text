@@ -39,7 +39,8 @@ span {
 		padding: 0 2px;
 		margin-right: 8px;
 		cursor: default;
-
+		user-select: none;
+		-webkit-user-select: none;
 	}
 
 	.line {

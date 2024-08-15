@@ -122,6 +122,7 @@ img {
 		border-radius: 5px;
 		transition: background 300ms;
 		user-select: none;
+		-webkit-user-select: none;
 
 		&:hover {
 			background: var(--sidebar_file_background);
