@@ -8,7 +8,7 @@ use config::{
     local::{load_prev_state, save_state},
     themes::load_theme,
 };
-use editor::file::{add_chars, close_file, file_lines, list_files, open_file, remove_chars};
+use editor::file::{add_chars, close_file, file_lines, open_file, remove_chars, list_dirs};
 use serde::Serialize;
 use std::sync::Mutex;
 
@@ -47,11 +47,11 @@ fn main() {
             open_file,
             file_lines,
             add_chars,
-            list_files,
             close_file,
             remove_chars,
             load_prev_state,
-            load_theme
+            load_theme,
+            list_dirs
         ])
         .build(tauri::generate_context!())
         .expect("error while running application")

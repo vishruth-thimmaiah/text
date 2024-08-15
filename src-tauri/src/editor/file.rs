@@ -1,40 +1,11 @@
 use std::fs::File;
-use std::{fs, sync::Mutex};
+use std::path::PathBuf;
+use std::sync::Mutex;
 
+use serde::Serialize;
 use tauri::State;
 
 use crate::{InnerAppState, OpenFiles};
-
-#[tauri::command]
-pub fn list_files(
-    dir: String,
-    state: State<'_, Mutex<InnerAppState>>,
-) -> (Vec<String>, Vec<String>) {
-    let files = fs::read_dir(&dir).unwrap();
-    state.lock().unwrap().active_dir = Some(dir);
-
-    let mut file_names = Vec::new();
-    let mut dir_names = Vec::new();
-
-    for file in files {
-        if let Ok(file) = file {
-            let path = file.path();
-            let pathname = path
-                .file_name()
-                .unwrap()
-                .to_str()
-                .map(|s| s.to_owned())
-                .unwrap();
-            if path.is_file() {
-                file_names.push(pathname)
-            } else if path.is_dir() {
-                dir_names.push(pathname)
-            }
-        }
-    }
-
-    return (file_names, dir_names);
-}
 
 #[tauri::command]
 pub fn open_file(filepath: String, state: State<'_, Mutex<InnerAppState>>) {
@@ -129,4 +100,57 @@ pub fn remove_chars(
 
     rope.write_to(File::create(&file.filepath).unwrap())
         .unwrap();
+}
+
+#[derive(Debug, Serialize)]
+struct Files {
+    name: String,
+}
+
+#[derive(Debug, Serialize)]
+pub struct Dirs {
+    name: String,
+    files: Vec<Files>,
+    subdirs: Vec<Dirs>,
+}
+
+impl Dirs {
+    fn from(name: String) -> Self {
+        Self {
+            name,
+            files: Vec::new(),
+            subdirs: Vec::new(),
+        }
+    }
+}
+
+fn add_contents(path: PathBuf, cwd: &mut Dirs) {
+    let contents = path.read_dir().unwrap();
+
+    for item in contents {
+        if let Ok(item) = item {
+            let filetype = item.file_type().unwrap();
+            let filename = item.file_name().into_string().unwrap();
+            if filetype.is_dir() {
+                let nested_dir = path.join(filename);
+                cwd.subdirs
+                    .push(Dirs::from(nested_dir.to_str().unwrap().to_string()));
+                add_contents(nested_dir, cwd.subdirs.last_mut().unwrap());
+            } else if filetype.is_file() {
+                cwd.files.push(Files { name: filename })
+            }
+        }
+    }
+}
+
+#[tauri::command]
+pub fn list_dirs(cwd: String, state: State<'_, Mutex<InnerAppState>>) -> Dirs {
+    let root_dir = PathBuf::from(&cwd);
+    state.lock().unwrap().active_dir = Some(cwd.clone());
+
+    let mut dirs = Dirs::from(cwd);
+
+    add_contents(root_dir, &mut dirs);
+
+    dirs
 }

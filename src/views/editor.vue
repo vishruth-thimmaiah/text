@@ -61,21 +61,25 @@ onMounted(async () => {
 		.placeholder {
 			display: initial;
 		}
+
+		.lines::before {
+			border-bottom: var(--accent_color) 1px solid;
+		}
 	}
-}
 
-.lines {
-	display: flex;
-	flex-direction: column;
-	top: 0;
-
-	&::before {
-		content: '';
-		position: absolute;
-		background-color: var(--editor_background_line_numbers);
+	.lines {
+		display: flex;
+		flex-direction: column;
 		top: 0;
-		bottom: 0;
-		width: 32px;
+
+		&::before {
+			content: '';
+			position: absolute;
+			background-color: var(--editor_background_line_numbers);
+			top: 0;
+			bottom: 0;
+			width: 32px;
+		}
 	}
 }
 </style>

@@ -1,7 +1,7 @@
 import { defineStore } from "pinia";
 import { ref } from "vue";
 import { VimModes } from "../bindings/vim";
-import { Cursor } from '../ts/cursor.ts'
+import { Cursor } from '../modules/cursor.ts'
 
 export const GlobalStore = defineStore('store', () => {
 	const editor_top_height = ref<number>(0)
