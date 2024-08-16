@@ -1,5 +1,5 @@
 import { storeToRefs } from "pinia"
-import { EditorState, GlobalStore, VimState } from "../state"
+import { EditorState, GlobalStore, VimState } from "../../state"
 import { VimModes } from "./vim"
 import { invoke } from "@tauri-apps/api"
 

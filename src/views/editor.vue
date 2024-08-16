@@ -13,7 +13,7 @@ import Line from '../components/line.vue';
 import Cursor from '../components/cursor.vue';
 import { storeToRefs } from 'pinia';
 import { EditorState, GlobalStore } from '../state';
-import { vim_bindings } from '../bindings/vim';
+import { vim_bindings } from '../modules/bindings/vim';
 import { onMounted } from 'vue';
 
 const store = EditorState()

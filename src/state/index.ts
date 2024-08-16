@@ -1,6 +1,6 @@
 import { defineStore } from "pinia";
 import { ref } from "vue";
-import { VimModes } from "../bindings/vim";
+import { VimModes } from "../modules/bindings/vim";
 import { Cursor } from '../modules/cursor.ts'
 
 export const GlobalStore = defineStore('store', () => {

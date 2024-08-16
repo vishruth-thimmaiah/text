@@ -15,7 +15,6 @@ export interface Dirs {
 
 export async function ListDirs(selected_dir: string): Promise<Dirs> {
 	const res = await invoke<Dirs>("list_dirs", { cwd: selected_dir })
-	console.log(res)
 	return res
 }
 

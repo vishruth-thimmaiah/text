@@ -6,7 +6,7 @@ export enum VimModes {
 }
 
 import { storeToRefs } from 'pinia';
-import { EditorState, GlobalStore, VimState } from '../state/index.ts';
+import { EditorState, GlobalStore, VimState } from '../../state';
 import * as binds from './common.ts'
 import { ref } from 'vue';
 

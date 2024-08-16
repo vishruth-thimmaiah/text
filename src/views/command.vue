@@ -11,8 +11,8 @@
 <script setup lang="ts">
 import { storeToRefs } from 'pinia';
 import { VimState } from '../state';
-import { VimModes } from '../bindings/vim';
-import { ref_command_list } from '../bindings/vim';
+import { VimModes } from '../modules/bindings/vim';
+import { ref_command_list } from '../modules/bindings/vim';
 
 const { vim_mode, command } = storeToRefs(VimState())
 </script>
