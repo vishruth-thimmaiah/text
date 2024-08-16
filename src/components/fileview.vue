@@ -32,7 +32,9 @@ img {
 
 ul {
 	list-style: none;
-	padding: 0 20px;
+	padding: 0;
+	margin: 0;
+	margin-left: 20px;
 
 	li {
 		text-wrap: nowrap;
@@ -49,19 +51,33 @@ ul {
 
 	.files {
 		color: lightcyan;
-		margin-left: 15px;
+		margin-left: 19px;
+		border-radius: 5px;
+		transition: 200ms background linear;
+
+		&:hover {
+			background: var(--sidebar_file_background);
+		}
 	}
 }
 
 details {
 	summary {
 		list-style: none;
+		border-radius: 5px;
+		transition: 200ms background linear;
+
+		&:hover {
+			background: var(--sidebar_file_background);
+		}
 
 		&::-webkit-details-marker {
 			height: 8px;
 			width: 8px;
 			color: white;
+			padding-left: 5px;
 		}
+
 	}
 }
 </style>

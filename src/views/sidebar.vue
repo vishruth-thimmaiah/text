@@ -6,7 +6,7 @@
 			<img @click="open_file_picker" class="open_dir" src="/svgs/folder-open.svg">
 		</div>
 		<hr>
-		<Fileview v-if="cwd" :files="cwd"></Fileview>
+		<Fileview class="fileview" v-if="cwd" :files="cwd"></Fileview>
 	</div>
 </template>
 
@@ -79,25 +79,8 @@ img {
 	}
 }
 
-.files {
-	display: flex;
-	flex-direction: column;
-
-	.dir,
-	.file {
-		text-align: left;
-		background: none;
-		color: white;
-		border: 0;
-		margin: 0 5px;
-		border-radius: 5px;
-		transition: background 300ms;
-		user-select: none;
-		-webkit-user-select: none;
-
-		&:hover {
-			background: var(--sidebar_file_background);
-		}
-	}
+.fileview {
+	margin: 4px;
+	margin-left: 0;
 }
 </style>
