@@ -13,7 +13,7 @@ import Line from '../components/line.vue';
 import Cursor from '../components/cursor.vue';
 import { storeToRefs } from 'pinia';
 import { EditorState, GlobalStore } from '../state';
-import { vim_bindings } from '../modules/bindings/vim';
+import { Panels, vim_bindings } from '../modules/bindings/vim';
 import { onMounted } from 'vue';
 
 const store = EditorState()
@@ -21,14 +21,6 @@ const { lines, active_tab } = storeToRefs(store)
 const { show_sidebar, editor_down_height, focus_on } = storeToRefs(GlobalStore())
 
 
-onkeydown = async (event) => {
-	if (["Super", "Control", "Alt", "Shift"].includes(event.key)) {
-		return
-	}
-	vim_bindings(event.key, event.ctrlKey, event.metaKey)
-
-	event.preventDefault()
-}
 
 function move_cursor(event: MouseEvent) {
 	const element = document.getElementById("lines")
@@ -42,6 +34,19 @@ function height() {
 }
 onMounted(async () => {
 	height()
+
+
+	document.getElementById("editor")!.onkeydown = async (event) => {
+		console.log(23)
+		if (["Super", "Control", "Alt", "Shift"].includes(event.key)) {
+			return
+		}
+		vim_bindings(Panels.Editor, event.key, event.ctrlKey, event.metaKey)
+
+		event.preventDefault()
+	}
+
+
 })
 
 </script>
