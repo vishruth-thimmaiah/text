@@ -73,6 +73,7 @@ onMounted(async () => {
 	}
 
 	.lines {
+		position: relative;
 		display: flex;
 		flex-direction: column;
 		top: 0;
@@ -82,7 +83,7 @@ onMounted(async () => {
 			position: absolute;
 			background-color: var(--editor_background_line_numbers);
 			top: 0;
-			bottom: 0;
+			height: 100vh;
 			width: 32px;
 		}
 	}

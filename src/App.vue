@@ -3,6 +3,7 @@
 	<div class="wksp">
 		<Sidebar />
 		<Editor />
+		<Terminal />
 	</div>
 	<Footer />
 	<Command />
@@ -15,6 +16,7 @@ import Footer from './views/footer.vue';
 import Sidebar from './views/sidebar.vue';
 import Command from './views/command.vue';
 import { invoke } from '@tauri-apps/api';
+import Terminal from './views/terminal.vue';
 
 var root = document.querySelector(':root') as HTMLElement;
 invoke<Object | null>("load_theme").then(function (res) {
@@ -36,8 +38,8 @@ invoke<Object | null>("load_theme").then(function (res) {
 	right: 0;
 	display: grid;
 	grid-template:
-		"sidebar editor" min-content
-		"sidebar editor" 1fr
+		"sidebar editor" 2fr
+		"sidebar terminal" 1fr
 		/ min-content 1fr;
 }
 
@@ -53,5 +55,12 @@ invoke<Object | null>("load_theme").then(function (res) {
 .editor {
 	grid-area: editor;
 	min-width: 0;
+}
+
+.terminal {
+	resize: vertical;
+	grid-area: terminal;
+	min-height: 2vh;
+	max-height: 50vh;
 }
 </style>

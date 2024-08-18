@@ -1,3 +1,5 @@
+@import url("../../node_modules/@xterm/xterm/css/xterm.css");
+
 :root {
 	--editor_background: #2f2f2f;
 	--editor_foreground: #f6f6f6;

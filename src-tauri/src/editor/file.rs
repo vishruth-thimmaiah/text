@@ -8,18 +8,18 @@ use tauri::State;
 use crate::{InnerAppState, OpenFiles};
 
 #[tauri::command]
-pub fn open_file(filepath: String, state: State<'_, Mutex<InnerAppState>>) {
+pub fn open_file(filepath: String, state: State<'_, InnerAppState>) {
     let rope = ropey::Rope::from_reader(File::open(&filepath).unwrap()).unwrap();
-    state.lock().unwrap().files.push(OpenFiles {
+    state.files.lock().unwrap().push(OpenFiles {
         filepath,
         rope: Mutex::new(rope),
     });
 }
 
 #[tauri::command]
-pub fn close_file(file_index: usize, state: State<'_, Mutex<InnerAppState>>) {
-    let mut files = state.lock().unwrap();
-    files.files.remove(file_index);
+pub fn close_file(file_index: usize, state: State<'_, InnerAppState>) {
+    let mut files = state.files.lock().unwrap();
+    files.remove(file_index);
 }
 
 #[tauri::command]
@@ -27,10 +27,10 @@ pub fn file_lines(
     file_index: usize,
     mut start_pos: usize,
     end_pos: usize,
-    state: State<'_, Mutex<InnerAppState>>,
+    state: State<'_, InnerAppState>,
 ) -> Vec<String> {
-    let files = state.lock().unwrap();
-    let file = files.files.get(file_index).unwrap();
+    let files = state.files.lock().unwrap();
+    let file = files.get(file_index).unwrap();
 
     let mut lines: Vec<String> = vec![];
     let binding = file.rope.lock().unwrap();
@@ -54,10 +54,10 @@ pub fn add_chars(
     chars: String,
     start_line: usize,
     start_point: usize,
-    state: State<'_, Mutex<InnerAppState>>,
+    state: State<'_, InnerAppState>,
 ) {
-    let files = &state.lock().unwrap();
-    let file = files.files.get(file_index).unwrap();
+    let files = &state.files.lock().unwrap();
+    let file = files.get(file_index).unwrap();
     let mut rope = file.rope.lock().unwrap();
     let line_index = rope.line_to_char(start_line);
     let line_end_index = rope.line_to_char(start_line + 1);
@@ -79,10 +79,10 @@ pub fn remove_chars(
     count: usize,
     start_line: usize,
     start_point: usize,
-    state: State<'_, Mutex<InnerAppState>>,
+    state: State<'_, InnerAppState>,
 ) {
-    let files = &state.lock().unwrap();
-    let file = files.files.get(file_index).unwrap();
+    let files = &state.files.lock().unwrap();
+    let file = files.get(file_index).unwrap();
     let mut rope = file.rope.lock().unwrap();
     let line_index = rope.line_to_char(start_line);
     let line_end_index = rope.line_to_char(start_line + 1);
@@ -144,9 +144,9 @@ fn add_contents(path: PathBuf, cwd: &mut Dirs) {
 }
 
 #[tauri::command]
-pub fn list_dirs(cwd: String, state: State<'_, Mutex<InnerAppState>>) -> Dirs {
+pub fn list_dirs(cwd: String, state: State<'_, InnerAppState>) -> Dirs {
     let root_dir = PathBuf::from(&cwd);
-    state.lock().unwrap().active_dir = Some(cwd.clone());
+    *state.active_dir.lock().unwrap() = Some(cwd.clone());
 
     let mut dirs = Dirs::from(cwd);
 

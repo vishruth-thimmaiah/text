@@ -3,14 +3,17 @@
 
 mod config;
 mod editor;
+mod terminal;
 
 use config::{
     local::{load_prev_state, save_state},
     themes::load_theme,
 };
-use editor::file::{add_chars, close_file, file_lines, open_file, remove_chars, list_dirs};
+use editor::file::{add_chars, close_file, file_lines, list_dirs, open_file, remove_chars};
 use serde::Serialize;
 use std::sync::Mutex;
+use terminal::Terminal;
+use terminal::{init_terminal, read_from_term, resize_term, write_to_term};
 
 use ropey::Rope;
 
@@ -23,23 +26,26 @@ struct OpenFiles {
 
 #[derive(Serialize)]
 struct InnerAppState {
-    files: Vec<OpenFiles>,
-    active_dir: Option<String>,
+    files: Mutex<Vec<OpenFiles>>,
+    active_dir: Mutex<Option<String>>,
+    #[serde(skip_serializing)]
+    terminal: Terminal,
 }
 
 impl Default for InnerAppState {
     fn default() -> Self {
         return {
             InnerAppState {
-                files: Vec::new(),
-                active_dir: None,
+                files: Mutex::new(Vec::new()),
+                active_dir: Mutex::new(None),
+                terminal: Terminal::default(),
             }
         };
     }
 }
 
 fn main() {
-    let app_state = Mutex::new(InnerAppState::default());
+    let app_state = InnerAppState::default();
 
     tauri::Builder::default()
         .manage(app_state)
@@ -51,7 +57,11 @@ fn main() {
             remove_chars,
             load_prev_state,
             load_theme,
-            list_dirs
+            list_dirs,
+            init_terminal,
+            write_to_term,
+            resize_term,
+            read_from_term
         ])
         .build(tauri::generate_context!())
         .expect("error while running application")

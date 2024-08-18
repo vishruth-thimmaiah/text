@@ -1,4 +1,4 @@
-use std::{fs, sync::Mutex};
+use std::fs;
 
 use serde::{Deserialize, Serialize};
 use tauri::{AppHandle, Manager};
@@ -37,10 +37,9 @@ pub fn save_state(app_handle: &AppHandle) {
         active_dir: "".to_string(),
     };
 
-    let state = app_handle.state::<Mutex<InnerAppState>>();
-    let c = state.lock().unwrap();
-    history.active_dir = c.active_dir.clone().unwrap_or_default();
-    for file in &c.files {
+    let state = app_handle.state::<InnerAppState>();
+    history.active_dir = state.active_dir.lock().unwrap().clone().unwrap_or_default();
+    for file in &*state.files.lock().unwrap() {
         history.files.push(file.filepath.clone());
     }
 
