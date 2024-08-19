@@ -39,7 +39,7 @@ invoke<Object | null>("load_theme").then(function (res) {
 	display: grid;
 	grid-template:
 		"sidebar editor" 2fr
-		"sidebar terminal" 1fr
+		"sidebar terminal" 0fr
 		/ min-content 1fr;
 }
 
@@ -55,12 +55,15 @@ invoke<Object | null>("load_theme").then(function (res) {
 .editor {
 	grid-area: editor;
 	min-width: 0;
+
+	&:focus {
+		outline: none;
+	}
+	
 }
 
 .terminal {
-	resize: vertical;
 	grid-area: terminal;
-	min-height: 2vh;
-	max-height: 50vh;
+	height: 30vh;
 }
 </style>

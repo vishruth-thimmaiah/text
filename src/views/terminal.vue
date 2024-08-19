@@ -1,5 +1,5 @@
 <template>
-	<div id="terminal" class="terminal">
+	<div v-show="show_terminal" id="terminal" class="terminal">
 	</div>
 </template>
 
@@ -7,13 +7,16 @@
 import { invoke } from '@tauri-apps/api';
 import { FitAddon } from '@xterm/addon-fit';
 import { Terminal } from '@xterm/xterm';
+import { storeToRefs } from 'pinia';
 import { onMounted } from 'vue';
+import { GlobalStore } from '../state';
+const { show_terminal } = storeToRefs(GlobalStore())
 
 const terminal = new Terminal({
 	fontFamily: "'JetBrainsMono Nerd Font Mono', monospace",
 	fontSize: 13,
 	theme: {
-		background: "rgb(47, 47, 47)",
+		background: "rgba(47, 47, 47, 0)",
 	},
 })
 const termFitAddon = new FitAddon()
@@ -30,19 +33,19 @@ function resize() {
 	termFitAddon.fit()
 	invoke("resize_term", { rows: terminal.rows, cols: terminal.cols })
 }
+
 invoke("init_terminal")
 
 onMounted(() => {
-	terminal.open(document.getElementById("terminal")!)
+	const termDiv = document.getElementById("terminal")
+	terminal.open(termDiv!)
 	resize()
 
 	terminal.onData(async function (data: string) {
 		await invoke("write_to_term", { data })
 	})
 
-	onresize = () => {
-		resize()
-	}
+	new ResizeObserver(resize).observe(termDiv!)
 
 	read_from_term()
 })
@@ -51,6 +54,6 @@ onMounted(() => {
 <style scoped>
 
 .terminal {
-	background: var(--sidebar_background);
+	background: var(--terminal_background);
 }
 </style>

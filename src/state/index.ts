@@ -8,9 +8,10 @@ export const GlobalStore = defineStore('store', () => {
 	const editor_down_height = ref<number>(0)
 	const tabs = ref<string[]>([])
 	const show_sidebar = ref<boolean>(true)
+	const show_terminal = ref<boolean>(true)
 	const focus_on = ref<number>(0)
 
-	return { editor_top_height, editor_down_height, tabs, show_sidebar, focus_on }
+	return { editor_top_height, editor_down_height, tabs, show_sidebar, show_terminal, focus_on }
 })
 
 export const VimState = defineStore('vim', () => {

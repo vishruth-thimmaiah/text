@@ -1,6 +1,6 @@
 <template>
-	<div @focusin="focus_on = 0" tabindex="0" @resize="height" id="editor"
-		:class="`editor ${focus_on == 0 ? ' active' : ''}`" :style="`left: ${show_sidebar ? '' : '0'};`">
+	<div @focusin="focus_on = 0" tabindex="0" id="editor" :class="`editor ${focus_on == 0 ? ' active' : ''}`"
+		:style="`left: ${show_sidebar ? '' : '0'};`">
 		<Cursor v-if="active_tab !== null" />
 		<div @click="move_cursor" id="lines" class="lines">
 			<Line :text="line" :line-number="index" v-for="(line, index) in lines" />
@@ -21,7 +21,6 @@ const { lines, active_tab } = storeToRefs(store)
 const { show_sidebar, editor_down_height, focus_on } = storeToRefs(GlobalStore())
 
 
-
 function move_cursor(event: MouseEvent) {
 	const element = document.getElementById("lines")
 	const rect = element?.getBoundingClientRect()
@@ -37,7 +36,6 @@ onMounted(async () => {
 
 
 	document.getElementById("editor")!.onkeydown = async (event) => {
-		console.log(23)
 		if (["Super", "Control", "Alt", "Shift"].includes(event.key)) {
 			return
 		}
@@ -45,7 +43,6 @@ onMounted(async () => {
 
 		event.preventDefault()
 	}
-
 
 })
 
@@ -65,10 +62,6 @@ onMounted(async () => {
 
 		.placeholder {
 			display: initial;
-		}
-
-		.lines::before {
-			border-bottom: var(--accent_color) 1px solid;
 		}
 	}
 
