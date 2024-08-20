@@ -1,4 +1,4 @@
-use std::fs::File;
+use std::{fs::File, usize};
 use std::path::PathBuf;
 use std::sync::Mutex;
 
@@ -8,12 +8,15 @@ use tauri::State;
 use crate::{InnerAppState, OpenFiles};
 
 #[tauri::command]
-pub fn open_file(filepath: String, state: State<'_, InnerAppState>) {
+pub fn open_file(filepath: String, state: State<'_, InnerAppState>) -> usize {
     let rope = ropey::Rope::from_reader(File::open(&filepath).unwrap()).unwrap();
+
+    let length = rope.len_lines();
     state.files.lock().unwrap().push(OpenFiles {
         filepath,
         rope: Mutex::new(rope),
     });
+    length
 }
 
 #[tauri::command]

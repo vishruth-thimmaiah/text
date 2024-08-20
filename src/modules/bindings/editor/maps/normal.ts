@@ -73,9 +73,9 @@ export function normal(key: string, ctrl: boolean, alt: boolean) {
 				insert_mode()
 				return
 
-			case "ZZ":
-				layout.close_tab()
-				return
+			// case "ZZ":
+			// 	layout.close_tab()
+			// 	return
 		}
 	}
 

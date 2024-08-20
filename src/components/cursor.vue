@@ -1,7 +1,5 @@
 <template>
-	<div class="placeholder">
-		<div id="cursor" :style="`left: calc(${cursor.x}ch + 39px); top: ${cursor.y * 2}ch`" :class="vim_mode" />
-	</div>
+		<div id="cursor" :style="`left: calc(${cursor.x}ch + 40px); top: ${cursor.y * 2}ch`" :class="vim_mode" />
 </template>
 
 <script setup lang="ts">
@@ -14,7 +12,7 @@ const { vim_mode } = storeToRefs(VimState())
 
 <style scoped>
 .placeholder {
-	position: absolute;
+	position: relative;
 	top: 0;
 }
 

@@ -2,7 +2,7 @@
 	<span :class="(cursor.y) === lineNumber ? 'active' : ''">
 		<span class="line_number"> {{
 			cursor.y !== lineNumber ?
-				Math.abs(lineNumber! - cursor.y) : lineNumber! + editor_top_height + 1
+				Math.abs(lineNumber! - cursor.y) : lineNumber! + 1
 		}}
 		</span>
 		<span class="line">{{ text }}</span>
@@ -11,14 +11,13 @@
 
 <script setup lang="ts">
 import { storeToRefs } from 'pinia';
-import { EditorState, GlobalStore } from '../state';
+import { EditorState } from '../state';
 
 defineProps({
 	text: String,
 	lineNumber: Number
 })
 
-const { editor_top_height } = storeToRefs(GlobalStore())
 const { cursor } = storeToRefs(EditorState())
 
 </script>

@@ -16,7 +16,7 @@ import { open } from '@tauri-apps/api/dialog';
 import { invoke } from '@tauri-apps/api';
 import { storeToRefs } from 'pinia';
 import { GlobalStore } from '../state';
-import { ListDirs, open_file } from '../modules/files/files';
+import { ListDirs, OpenFile, } from '../modules/files/files';
 import Fileview from '../components/fileview.vue';
 
 const { show_sidebar, focus_on } = storeToRefs(GlobalStore())
@@ -41,7 +41,7 @@ onMounted(async () => {
 		current_dir.value = response.active_dir
 		cwd.value = await ListDirs(response.active_dir)
 		for (const file of response.files) {
-			open_file(file)
+			OpenFile(file)
 		}
 	}
 })

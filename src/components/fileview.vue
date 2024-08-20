@@ -9,7 +9,7 @@
 				<fileview :files="dir"></fileview>
 			</details>
 		</li>
-		<li @click="open_file(files.name + '/' + file.name)" class="files" v-for="file in files.files">
+		<li @click="OpenFile(files.name + '/' + file.name)" class="files" v-for="file in files.files">
 			<img src="/svgs/file.svg">
 			{{ file.name }}
 		</li>
@@ -17,8 +17,7 @@
 </template>
 
 <script setup lang="ts">
-import { Dirs } from '../modules/files/files';
-import { open_file } from '../modules/files/files';
+import { Dirs, OpenFile } from '../modules/files/files';
 
 defineProps<{
 	files: Dirs

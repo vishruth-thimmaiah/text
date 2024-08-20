@@ -1,5 +1,6 @@
 import { EditorState } from "../../../state"
 import { storeToRefs } from "pinia"
+import { FilesStore } from "../../files/filedata"
 
 export function move_right() {
 	const { cursor } = storeToRefs(EditorState())
@@ -19,8 +20,9 @@ export function move_up() {
 }
 export function next_word() {
 	var count = 0
-	const { cursor, lines } = storeToRefs(EditorState())
-	for (const letter of lines.value[cursor.value.y].substring(cursor.value.x + 1)) {
+	const { cursor } = storeToRefs(EditorState())
+	const { currFileLines } = storeToRefs(FilesStore())
+	for (const letter of currFileLines.value[cursor.value.y].substring(cursor.value.x + 1)) {
 		if (letter.match(/[a-zA-Z0-9]/)) {
 			count += 1
 		} else if (letter !== " ") {
@@ -36,8 +38,9 @@ export function next_word() {
 }
 export function prev_word() {
 	var count = 0
-	const { cursor, lines } = storeToRefs(EditorState())
-	const line = lines.value[cursor.value.y].substring(0, cursor.value.x)
+	const { cursor } = storeToRefs(EditorState())
+	const { currFileLines } = storeToRefs(FilesStore())
+	const line = currFileLines.value[cursor.value.y].substring(0, cursor.value.x)
 	for (const letter of line.split('').reverse().join('')) {
 		if (letter.match(/[a-zA-Z0-9]/)) {
 			count += 1

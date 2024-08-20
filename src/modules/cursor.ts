@@ -1,6 +1,6 @@
 import { storeToRefs } from "pinia";
 import { EditorState, GlobalStore } from "../state";
-import { invoke } from "@tauri-apps/api";
+import { FilesStore } from "./files/filedata";
 
 export class Cursor {
 	protected cursor: HTMLElement;
@@ -13,75 +13,68 @@ export class Cursor {
 		this.y = y
 	}
 
-	isValid(x: number, y: number): { valid: boolean, x?: number } {
-		const { lines } = storeToRefs(EditorState())
-		if (lines.value[y][x]) {
-			return { valid: true }
+	isValid(x: number, y: number): { newx: number, newy: number } {
+		const { currFileLines } = storeToRefs(FilesStore())
+
+		var newx = x
+		var newy = y
+
+		if (currFileLines.value[y] === undefined) {
+			newy = currFileLines.value.length - 1
 		}
-		var len = lines.value[y].length - 1
-		len = len >= 0 ? len : 0
-		return { valid: false, x: len }
+
+		if (currFileLines.value[newy][x] === undefined) {
+			newx = currFileLines.value[newy].length - 1
+		}
+
+		return { newx, newy }
 	}
 
 	public set(x: number, y: number) {
 		const isValid = this.isValid(x, y)
 		if (x >= 0 && y >= 0) {
-			if (isValid.valid === true) {
-				this.x = x
-			} else {
-				this.x = isValid.x!
-			}
-
-			this.y = y
+			this.x = isValid.newx
+			this.y = isValid.newy
 		}
 	}
 
-	async scroll_down() {
-		const window_props = storeToRefs(GlobalStore())
-		const { lines, active_tab } = storeToRefs(EditorState())
-		const line_number = window_props.editor_top_height.value + window_props.editor_down_height.value
-		const line = await invoke<string[]>("file_lines", {
-			fileIndex: active_tab.value, startPos: line_number, endPos: line_number + 1
-		})
-		if (line[0]) {
-			lines.value.splice(0, 1)
-			lines.value.push(line[0])
-			window_props.editor_top_height.value += 1
+	scroll_down(y: number) {
+		const filestore = FilesStore()
+		const { files, active_tab } = storeToRefs(filestore)
+		if (y >= files.value[active_tab.value!].lines_loaded) {
+			filestore.getLines(active_tab.value!, y, y+50)
 		}
+		document.getElementById("editor")?.scrollBy(0, 18)
 	}
-
-	async scroll_up() {
-		const window_props = storeToRefs(GlobalStore())
-		const { lines, active_tab } = storeToRefs(EditorState())
-		const line_number = window_props.editor_top_height.value - 1
-		if (line_number >= 0) {
-			const line = await invoke<string[]>("file_lines", {
-				fileIndex: active_tab.value, startPos: line_number, endPos: line_number + 1
-			})
-			lines.value.splice(window_props.editor_down_height.value, 1)
-			lines.value.splice(0, 0, line[0])
-			window_props.editor_top_height.value -= 1
-		}
+	scroll_up() {
+		document.getElementById("editor")?.scrollBy(0, -18)
+	}
+	scroll_left() {
+		document.getElementById("editor")?.scrollBy(-8, 0)
+	}
+	scroll_right() {
+		document.getElementById("editor")?.scrollBy(8, 0)
 	}
 
 	public async rset(x: number, y: number) {
-		const window_props = storeToRefs(GlobalStore())
 
-		if ((this.y + y) > window_props.editor_down_height.value - 1) {
-			await this.scroll_down()
+		const { editor_down_height, editor_top_height } = storeToRefs(GlobalStore())
+
+		const newy = this.y + y
+		const newx = this.x + x
+
+		if (newy > editor_down_height.value + editor_top_height.value - 1) {
+			this.scroll_down(newy)
 		}
-		else if (this.y + y < 0) {
-			await this.scroll_up()
+		else if (newy >= 0 && newy < editor_top_height.value) {
+			this.scroll_up()
 		}
 
-		else if (this.x + x >= 0 && this.y + y >= 0) {
-			this.x += x
-			this.y += y
+		if (this.x + x >= 0 && this.y + y >= 0) {
+			const isValid = this.isValid(newx, newy)
+			this.x = isValid.newx
+			this.y = isValid.newy
 		}
 
-		const isValid = this.isValid(this.x, this.y)
-		if (isValid.valid !== true) {
-			this.x = isValid.x!
-		}
 	}
 }

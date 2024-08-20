@@ -1,6 +1,7 @@
 import { invoke } from "@tauri-apps/api"
-import { EditorState, GlobalStore } from "../../state"
 import { storeToRefs } from "pinia"
+import { GlobalStore } from "../../state"
+import { FilesStore } from "./filedata"
 
 
 interface Files {
@@ -18,21 +19,22 @@ export async function ListDirs(selected_dir: string): Promise<Dirs> {
 	return res
 }
 
-export async function open_file(file: string) {
+export async function OpenFile(filepath: string): Promise<void> {
+	const { tabs } = storeToRefs(GlobalStore())
+	const { newFile, getLines } = FilesStore()
 
-	const { tabs, editor_down_height } = storeToRefs(GlobalStore())
-	const { lines, active_tab } = storeToRefs(EditorState())
-	const file_name = file.split('/').pop()!
-	const index = tabs.value.indexOf(file_name)
+	const filename = filepath.split('/').pop()!
+	const index = tabs.value.indexOf(filename)
 	if (index === -1) {
-		await invoke("open_file", { filepath: file })
-		tabs.value.push(file_name)
-		active_tab.value = tabs.value.length - 1
-		lines.value = await invoke<string[]>("file_lines", { fileIndex: active_tab.value, startPos: 0, endPos: editor_down_height.value })
-	}
-	else {
-		active_tab.value = index
-		lines.value = await invoke<string[]>("file_lines", { fileIndex: index, startPos: 0, endPos: editor_down_height.value })
+		tabs.value.push(filename)
+		const index = await newFile(filepath)
+		await getLines(index)
 	}
 }
 
+export async function CloseFile(index: number): Promise<void> {
+	const { tabs } = storeToRefs(GlobalStore())
+	tabs.value.splice(index, 1)
+	const { closeFile } = FilesStore()
+	await closeFile(index)
+}

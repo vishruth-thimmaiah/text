@@ -1,36 +1,20 @@
 <template>
 	<div class="topbar">
 		<div :class="index === active_tab ? 'active' : ''" v-for="(tab, index) in tabs">
-			<label @click="open_existing_file(index)">{{ tab }}</label>
-			<button @click="close_file(index)">×</button>
+			<label @click="active_tab = index">{{ tab }}</label>
+			<button @click="CloseFile(index)">×</button>
 		</div>
 	</div>
 </template>
 
 <script setup lang="ts">
-import { invoke } from '@tauri-apps/api';
-import { EditorState, GlobalStore } from '../state';
+import { GlobalStore } from '../state';
 import { storeToRefs } from 'pinia';
+import { FilesStore } from '../modules/files/filedata';
+import { CloseFile } from '../modules/files/files';
 
-const { active_tab, lines } = storeToRefs(EditorState())
-const { tabs, editor_down_height } = storeToRefs(GlobalStore())
-
-async function open_existing_file(index: number) {
-	active_tab.value = index
-	lines.value = await invoke<string[]>("file_lines", { fileIndex: index, startPos: 0, endPos: editor_down_height.value })
-}
-
-async function close_file(index: number) {
-	tabs.value.splice(index, 1)
-	if (active_tab.value === index) {
-		active_tab.value -= 1
-		await open_existing_file(active_tab.value)
-	}
-	else if (active_tab.value! >= index) {
-		active_tab.value! -= 1
-	}
-	await invoke<string[]>("close_file", { fileIndex: index })
-}
+const { active_tab } = storeToRefs(FilesStore())
+const { tabs } = storeToRefs(GlobalStore())
 
 </script>
 

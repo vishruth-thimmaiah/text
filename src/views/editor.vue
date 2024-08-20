@@ -3,7 +3,8 @@
 		:style="`left: ${show_sidebar ? '' : '0'};`">
 		<Cursor v-if="active_tab !== null" />
 		<div @click="move_cursor" id="lines" class="lines">
-			<Line :text="line" :line-number="index" v-for="(line, index) in lines" />
+			<Line :text="line" v-if="active_tab !== null && files[active_tab]" :line-number="index"
+				v-for="(line, index) in files[active_tab].lines" />
 		</div>
 	</div>
 </template>
@@ -15,10 +16,12 @@ import { storeToRefs } from 'pinia';
 import { EditorState, GlobalStore } from '../state';
 import { Panels, vim_bindings } from '../modules/bindings/vim';
 import { onMounted } from 'vue';
+import { FilesStore } from '../modules/files/filedata';
 
 const store = EditorState()
-const { lines, active_tab } = storeToRefs(store)
-const { show_sidebar, editor_down_height, focus_on } = storeToRefs(GlobalStore())
+const filestore = FilesStore()
+const { show_sidebar, editor_top_height, editor_down_height, focus_on } = storeToRefs(GlobalStore())
+const { files, active_tab } = storeToRefs(FilesStore())
 
 
 function move_cursor(event: MouseEvent) {
@@ -34,8 +37,9 @@ function height() {
 onMounted(async () => {
 	height()
 
+	const editor = document.getElementById("editor")!
 
-	document.getElementById("editor")!.onkeydown = async (event) => {
+	editor.onkeydown = async (event) => {
 		if (["Super", "Control", "Alt", "Shift"].includes(event.key)) {
 			return
 		}
@@ -44,14 +48,25 @@ onMounted(async () => {
 		event.preventDefault()
 	}
 
+	new ResizeObserver(height).observe(editor)
+
+	editor.onscroll = () => {
+		const topLine = Math.floor(editor.scrollTop / 18)
+		editor_top_height.value = topLine
+
+		const linesLoaded = files.value[active_tab.value!].lines_loaded
+
+		if (editor_top_height.value + editor_down_height.value + 1 >= linesLoaded) {
+			filestore.getLines(active_tab.value!, linesLoaded, linesLoaded + 50)
+		}
+	}
 })
 
 </script>
-
 <style scoped>
 .editor {
 	overflow-x: auto;
-	overflow-y: hidden;
+	overflow-y: auto;
 
 	.placeholder {
 		display: none;
@@ -69,7 +84,7 @@ onMounted(async () => {
 		position: relative;
 		display: flex;
 		flex-direction: column;
-		top: 0;
+		top: -2ch;
 
 		&::before {
 			content: '';
