@@ -52,6 +52,10 @@ body {
 	background: var(--accent_color);
 }
 
+.xterm.focus {
+	border-bottom: var(--accent_color) 1px solid;
+}
+
 @media (prefers-color-scheme: dark) {
 	body {
 		color: var(--editor_foreground);

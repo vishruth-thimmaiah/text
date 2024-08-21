@@ -1,5 +1,5 @@
 <template>
-	<div :class="'sidebar' + (focus_on == 1 ? ' active' : '')" id="sidebar" tabindex="0" @focusin="focus_on = 1"
+	<div class="sidebar" id="sidebar" tabindex="0"
 		v-show="show_sidebar">
 		<div class="tools">
 			<label class="curr_dir">{{ current_dir }}/</label>
@@ -19,7 +19,7 @@ import { GlobalStore } from '../state';
 import { ListDirs, OpenFile, } from '../modules/files/files';
 import Fileview from '../components/fileview.vue';
 
-const { show_sidebar, focus_on } = storeToRefs(GlobalStore())
+const { show_sidebar} = storeToRefs(GlobalStore())
 
 const current_dir = ref<string>("")
 const cwd = ref()
@@ -58,7 +58,7 @@ img {
 	color: var(--sidebar_foreground);
 	z-index: 5;
 
-	&.active {
+	&:focus {
 		border-bottom: var(--accent_color) 1px solid;
 	}
 }

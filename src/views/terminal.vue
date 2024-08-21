@@ -52,8 +52,8 @@ onMounted(() => {
 </script>
 
 <style scoped>
-
 .terminal {
 	background: var(--terminal_background);
 }
+
 </style>

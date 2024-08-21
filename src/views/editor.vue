@@ -1,6 +1,5 @@
 <template>
-	<div @focusin="focus_on = 0" tabindex="0" id="editor" :class="`editor ${focus_on == 0 ? ' active' : ''}`"
-		:style="`left: ${show_sidebar ? '' : '0'};`">
+	<div tabindex="0" id="editor" class="editor">
 		<Cursor v-if="active_tab !== null" />
 		<div @click="move_cursor" id="lines" class="lines">
 			<Line :text="line" v-if="active_tab !== null && files[active_tab]" :line-number="index"
@@ -20,7 +19,7 @@ import { FilesStore } from '../modules/files/filedata';
 
 const store = EditorState()
 const filestore = FilesStore()
-const { show_sidebar, editor_top_height, editor_down_height, focus_on } = storeToRefs(GlobalStore())
+const { editor_top_height, editor_down_height } = storeToRefs(GlobalStore())
 const { files, active_tab } = storeToRefs(FilesStore())
 
 
@@ -68,16 +67,8 @@ onMounted(async () => {
 	overflow-x: auto;
 	overflow-y: auto;
 
-	.placeholder {
-		display: none;
-	}
-
-	&.active {
+	&:focus {
 		border-bottom: var(--accent_color) 1px solid;
-
-		.placeholder {
-			display: initial;
-		}
 	}
 
 	.lines {
