@@ -1,5 +1,5 @@
 <template>
-	<div class="topbar">
+	<div @mousedown.prevent class="topbar">
 		<div :class="index === active_tab ? 'active' : ''" v-for="(tab, index) in tabs">
 			<label @click="active_tab = index">{{ tab }}</label>
 			<button @click="CloseFile(index)">×</button>

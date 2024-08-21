@@ -1,81 +1,47 @@
 import * as motions from "../motions"
-import { command_mode } from "../../common"
 import { insert_mode } from "../../common"
 
-var cmd = ""
-var timeout: number
-
-export function normal(key: string, ctrl: boolean, alt: boolean) {
-	var localcmd = ""
-	localcmd += ctrl ? "Control" : ''
-	localcmd += alt ? "Alt" : ''
-
-	if (cmd !== "") {
-		localcmd = cmd
-		cmd = ""
-		clearTimeout(timeout)
-	}
-	if (key === "Escape") {
-		document.getElementById("keystrokes")!.textContent = ""
-		return
-	}
-
-	// Globals
-	switch (localcmd + key) {
-		case "Controlww":
-			// layout.cycle_view(focus_on.value)
-			return
-
-		case ":":
-			command_mode()
-			return
-	}
-
-	switch (localcmd + key) {
+export function normalEditor(keys: string): boolean {
+	switch (keys) {
 
 		// Motions
 		case "l":
 		case "ArrowRight":
 			motions.move_right()
-			return
+			return true
 		case "h":
 		case "ArrowLeft":
 			motions.move_left()
-			return
+			return true
 		case "j":
 		case "ArrowDown":
 			motions.move_down()
-			return
+			return true
 		case "k":
 		case "ArrowUp":
 			motions.move_up()
-			return
+			return true
 
 		case "w":
 			motions.next_word()
-			return
+			return true
 
 		case "b":
 			motions.prev_word()
-			return
+			return true
 
 		// insert
 		case "i":
 			insert_mode()
-			return
+			return true
 		case "a":
 			motions.move_right()
 			insert_mode()
-			return
+			return true
 
 		// case "ZZ":
 		// 	layout.close_tab()
 		// 	return
 	}
-
-	cmd = localcmd + key
-	timeout = setTimeout(() => {
-		cmd = ""
-	}, 1500)
-
+	return false
 }

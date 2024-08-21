@@ -1,6 +1,5 @@
 <template>
-	<div class="sidebar" id="sidebar" tabindex="0"
-		v-show="show_sidebar">
+	<div class="sidebar" id="sidebar" tabindex="0" v-show="show_sidebar">
 		<div class="tools">
 			<label class="curr_dir">{{ current_dir }}/</label>
 			<img @click="open_file_picker" class="open_dir" src="/svgs/folder-open.svg">
@@ -18,8 +17,9 @@ import { storeToRefs } from 'pinia';
 import { GlobalStore } from '../state';
 import { ListDirs, OpenFile, } from '../modules/files/files';
 import Fileview from '../components/fileview.vue';
+import { Panels, vim_bindings } from '../modules/bindings/vim';
 
-const { show_sidebar} = storeToRefs(GlobalStore())
+const { show_sidebar } = storeToRefs(GlobalStore())
 
 const current_dir = ref<string>("")
 const cwd = ref()
@@ -43,6 +43,15 @@ onMounted(async () => {
 		for (const file of response.files) {
 			OpenFile(file)
 		}
+	}
+
+	document.getElementById("sidebar")!.onkeydown = async (event) => {
+		if (["Super", "Control", "Alt", "Shift"].includes(event.key)) {
+			return
+		}
+		vim_bindings(Panels.Sidebar, event.key, event.ctrlKey, event.metaKey)
+
+		event.preventDefault()
 	}
 })
 

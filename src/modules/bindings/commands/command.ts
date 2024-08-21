@@ -9,7 +9,7 @@ commands.set("Explore", toggle)
 const command_list = Array.from(commands.keys())
 export const ref_command_list = ref(command_list)
 
-export function command(key: string) {
+export function commandRunner(key: string) {
 	const store = VimState()
 	const { command } = storeToRefs(store)
 	switch (key) {

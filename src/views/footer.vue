@@ -1,7 +1,7 @@
 <template>
-	<div class="footer">
-			<img @click="show_sidebar = !show_sidebar" src="/svgs/sidebar.svg">
-			<img @click="show_terminal = !show_terminal" src="/svgs/terminal.svg">
+	<div @mousedown.prevent class="footer">
+		<img @click="show_sidebar = !show_sidebar" src="/svgs/sidebar.svg">
+		<img @click="show_terminal = !show_terminal" src="/svgs/terminal.svg">
 		<label> {{ vim_mode.toUpperCase() }} </label>
 		<label id="keystrokes"></label>
 	</div>
