@@ -1,7 +1,11 @@
 import * as motions from "../motions"
 import { insert_mode } from "../../common"
+import { EditorState } from "../../../../state"
+import { storeToRefs } from "pinia"
 
 export function normalEditor(keys: string): boolean {
+	const editor = EditorState()
+	const { cursor } = storeToRefs(editor)
 	switch (keys) {
 
 		// Motions
@@ -20,6 +24,14 @@ export function normalEditor(keys: string): boolean {
 		case "k":
 		case "ArrowUp":
 			motions.move_up()
+			return true
+
+		case "gg":
+			editor.cursor.set(0, 0)
+			return true
+
+		case "0":
+			editor.cursor.set(0, cursor.value.y)
 			return true
 
 		case "w":

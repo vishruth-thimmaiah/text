@@ -16,7 +16,7 @@ const terminal = new Terminal({
 	fontFamily: "'JetBrainsMono Nerd Font Mono', monospace",
 	fontSize: 13,
 	theme: {
-		background: "rgba(47, 47, 47, 0)",
+		background: "rgba(0, 0, 0, 0)",
 	},
 })
 const termFitAddon = new FitAddon()
@@ -54,6 +54,7 @@ onMounted(() => {
 <style scoped>
 .terminal {
 	background: var(--terminal_background);
+	border-top: var(--footer_background) 1px solid;
 }
 
 </style>
