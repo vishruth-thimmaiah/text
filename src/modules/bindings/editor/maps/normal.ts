@@ -39,9 +39,6 @@ export function normalEditor(keys: string): boolean {
 			insert_mode()
 			return true
 
-		// case "ZZ":
-		// 	layout.close_tab()
-		// 	return
 	}
 	return false
 }

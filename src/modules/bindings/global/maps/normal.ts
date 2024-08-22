@@ -1,3 +1,4 @@
+import { CloseFile } from "../../../files/files"
 import { command_mode } from "../../common"
 
 export function global(keys: string): boolean {
@@ -8,6 +9,10 @@ export function global(keys: string): boolean {
 			return true
 		case ":":
 			command_mode()
+			return true
+
+		case "ZZ":
+			CloseFile()
 			return true
 	}
 

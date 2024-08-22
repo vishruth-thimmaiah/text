@@ -32,9 +32,13 @@ export async function OpenFile(filepath: string): Promise<void> {
 	}
 }
 
-export async function CloseFile(index: number): Promise<void> {
+export async function CloseFile(index: number = -1): Promise<void> {
+	const { active_tab } = storeToRefs(FilesStore())
 	const { tabs } = storeToRefs(GlobalStore())
-	tabs.value.splice(index, 1)
-	const { closeFile } = FilesStore()
-	await closeFile(index)
+	index = index >= 0 ? index : active_tab.value || -1
+	if (index !== -1) {
+		tabs.value.splice(index, 1)
+		const { closeFile } = FilesStore()
+		await closeFile(index)
+	}
 }
