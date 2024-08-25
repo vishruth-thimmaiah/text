@@ -3,6 +3,7 @@
 
 mod config;
 mod editor;
+mod lsp;
 mod terminal;
 
 use config::{
@@ -10,6 +11,7 @@ use config::{
     themes::load_theme,
 };
 use editor::file::{add_chars, close_file, file_lines, list_dirs, open_file, remove_chars};
+use lsp::*;
 use serde::Serialize;
 use std::sync::Mutex;
 use terminal::Terminal;
@@ -30,6 +32,8 @@ struct InnerAppState {
     active_dir: Mutex<Option<String>>,
     #[serde(skip_serializing)]
     terminal: Terminal,
+    #[serde(skip_serializing)]
+    lsp: Mutex<Option<LspInfo>>,
 }
 
 impl Default for InnerAppState {
@@ -39,6 +43,7 @@ impl Default for InnerAppState {
                 files: Mutex::new(Vec::new()),
                 active_dir: Mutex::new(None),
                 terminal: Terminal::default(),
+                lsp: Mutex::new(None),
             }
         };
     }
@@ -61,7 +66,13 @@ fn main() {
             init_terminal,
             write_to_term,
             resize_term,
-            read_from_term
+            read_from_term,
+            start_lsp_server,
+            initialize_lsp,
+            initialized_lsp,
+            hover_lsp,
+            open_file_lsp,
+            semantic_tokens_lsp
         ])
         .build(tauri::generate_context!())
         .expect("error while running application")

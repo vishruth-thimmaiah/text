@@ -2,6 +2,7 @@ import { invoke } from "@tauri-apps/api"
 import { storeToRefs } from "pinia"
 import { GlobalStore } from "../../state"
 import { FilesStore } from "./filedata"
+import { open_file } from "../lsp/requests"
 
 
 interface Files {
@@ -22,6 +23,8 @@ export async function ListDirs(selected_dir: string): Promise<Dirs> {
 export async function OpenFile(filepath: string): Promise<void> {
 	const { tabs } = storeToRefs(GlobalStore())
 	const { newFile, getLines } = FilesStore()
+
+	open_file(filepath)
 
 	const filename = filepath.split('/').pop()!
 	const index = tabs.value.indexOf(filename)

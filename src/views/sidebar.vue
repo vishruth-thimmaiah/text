@@ -18,6 +18,7 @@ import { GlobalStore } from '../state';
 import { ListDirs, OpenFile, } from '../modules/files/files';
 import Fileview from '../components/fileview.vue';
 import { Panels, vim_bindings } from '../modules/bindings/vim';
+import { initialize_lsp } from '../modules/lsp/requests';
 
 const { show_sidebar } = storeToRefs(GlobalStore())
 
@@ -30,6 +31,7 @@ async function open_file_picker(): Promise<void> {
 		console.warn("not supported")
 	} else if (selected !== null) {
 		current_dir.value = selected
+		initialize_lsp(selected)
 		cwd.value = await ListDirs(selected)
 	}
 }

@@ -27,6 +27,8 @@ invoke<Object | null>("load_theme").then(function (res) {
 		}
 	}
 })
+
+invoke("start_lsp_server")
 </script>
 
 <style scoped>
@@ -59,7 +61,7 @@ invoke<Object | null>("load_theme").then(function (res) {
 	&:focus {
 		outline: none;
 	}
-	
+
 }
 
 .terminal {
