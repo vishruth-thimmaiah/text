@@ -1,12 +1,14 @@
 <template>
-		<div id="cursor" :style="`left: calc(${cursor.x}ch + 40px); top: ${cursor.y * 2}ch`" :class="vim_mode" />
+	<div id="cursor" :style="`left: calc(${cursor.x}ch + 40px); top: ${cursor.y * 2}ch`" :class="vim_mode">
+		<div v-if="hoverText" class="hover">{{ hoverText }}</div>
+	</div>
 </template>
 
 <script setup lang="ts">
 import { storeToRefs } from 'pinia';
 import { EditorState, VimState } from '../state';
 
-const { cursor } = storeToRefs(EditorState())
+const { cursor, hoverText } = storeToRefs(EditorState())
 const { vim_mode } = storeToRefs(VimState())
 </script>
 
@@ -36,6 +38,21 @@ const { vim_mode } = storeToRefs(VimState())
 
 .replace {
 	border-bottom: 1px var(--cursor_replace) solid;
+}
+
+.hover {
+	position: relative;
+	background: var(--editor_background_line_numbers);
+	max-width: 400px;
+	border: var(--topbar_background) 1px solid;
+	width: 40vw;
+	max-height: 20vh;
+	overflow-y: scroll;
+	border-radius: 2px;
+	top: 20px;
+	left: 10px;
+	overflow-wrap: anywhere;
+	white-space-collapse: break-spaces;
 }
 
 @keyframes blink {

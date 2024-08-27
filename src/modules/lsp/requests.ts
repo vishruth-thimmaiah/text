@@ -1,6 +1,8 @@
 import { invoke } from "@tauri-apps/api"
 import { listen } from "@tauri-apps/api/event"
 import { setColorSpans, setTokenTypes } from "./semanticTokens"
+import { storeToRefs } from "pinia"
+import { EditorState } from "../../state"
 
 var lsp_initialized = false
 
@@ -59,6 +61,11 @@ listen<response>("lsp_response", (event) => {
 			setColorSpans(event.payload.content)
 			break
 		case "textDocument/publishDiagnostics":
+			break
+		case "textDocument/hover":
+			console.log(event.payload.content)
+			const { hoverText } = storeToRefs(EditorState())
+			hoverText.value = event.payload.content.value
 			break
 		default:
 			break

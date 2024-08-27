@@ -14,6 +14,8 @@ export class Cursor {
 	}
 
 	isValid(x: number, y: number): { newx: number, newy: number } {
+		const { hoverText } = storeToRefs(EditorState())
+		hoverText.value = ""
 		const { currFileLines } = storeToRefs(FilesStore())
 
 		var newx = x
@@ -42,7 +44,7 @@ export class Cursor {
 		const filestore = FilesStore()
 		const { files, active_tab } = storeToRefs(filestore)
 		if (y >= files.value[active_tab.value!].lines_loaded) {
-			filestore.getLines(active_tab.value!, y, y+50)
+			filestore.getLines(active_tab.value!, y, y + 50)
 		}
 		document.getElementById("editor")?.scrollBy(0, 18)
 	}
