@@ -5,7 +5,7 @@
 				Math.abs(lineNumber! - cursor.y) : lineNumber! + 1
 		}}
 		</span>
-		<span class="line">{{ text }}</span>
+		<span class="line"><span>{{ text }}</span></span>
 	</span>
 </template>
 
@@ -44,6 +44,7 @@ span {
 
 	.line {
 		margin-left: 40px;
+		white-space-collapse: break-spaces;
 	}
 
 	&.active {
@@ -60,4 +61,5 @@ span {
 		}
 	}
 }
+
 </style>

@@ -3,24 +3,30 @@ use lsp_types::{
     SemanticTokensClientCapabilities, SemanticTokensClientCapabilitiesRequests,
     TextDocumentClientCapabilities, Uri,
 };
-use serde::Serialize;
+use responses::handle_responses;
+use serde::{Deserialize, Serialize};
 use serde_json::{from_str, json};
+use std::collections::HashMap;
 use std::fs;
 use std::io::{BufRead, BufReader, Read, Write};
 use std::process::{ChildStdin, Command};
 use std::str::FromStr;
+use std::sync::Mutex;
 use std::thread::spawn;
 use std::{env, process::Stdio};
-use tauri::State;
+use tauri::{AppHandle, State};
 
 use crate::InnerAppState;
 
+mod responses;
+
 pub struct LspInfo {
     stdin: ChildStdin,
+    sent_requests: Mutex<HashMap<usize, String>>,
 }
 
-#[derive(Serialize)]
-struct Lsp<T> {
+#[derive(Debug, Serialize, Deserialize)]
+struct LspRequest<T> {
     jsonrpc: String,
     #[serde(skip_serializing_if = "Option::is_none")]
     id: Option<usize>,
@@ -29,7 +35,7 @@ struct Lsp<T> {
 }
 
 #[tauri::command]
-pub fn start_lsp_server(state: State<'_, InnerAppState>) -> Result<(), ()> {
+pub fn start_lsp_server(app_handle: AppHandle, state: State<'_, InnerAppState>) -> Result<(), ()> {
     let mut cmd =
         Command::new(env::var("HOME").unwrap() + "/.vscode-oss/extensions/rust-lang.rust-analyzer-0.3.2062-linux-x64/server/rust-analyzer");
 
@@ -77,21 +83,24 @@ pub fn start_lsp_server(state: State<'_, InnerAppState>) -> Result<(), ()> {
 
                 let response = str::from_utf8(&raw_vec).unwrap();
 
-                println!("{}", response);
+                handle_responses(response, &app_handle);
             }
         }
     });
 
     spawn(move || {
         let stderr_reader = BufReader::new(stderr);
-        for _line in stderr_reader.lines() {
-            // println!("{}", line.unwrap());
+        for line in stderr_reader.lines() {
+            println!("{}", line.unwrap());
         }
     });
 
     let mut state = state.lsp.lock().unwrap();
     if state.is_none() {
-        *state = Some(LspInfo { stdin });
+        *state = Some(LspInfo {
+            stdin,
+            sent_requests: Mutex::new(HashMap::new()),
+        });
     }
 
     Ok(())
@@ -101,6 +110,8 @@ pub fn start_lsp_server(state: State<'_, InnerAppState>) -> Result<(), ()> {
 pub fn initialize_lsp(root_dir: &str, state: State<'_, InnerAppState>) -> Result<(), ()> {
     let state = state.lsp.lock().unwrap();
     let mut stdin = &state.as_ref().unwrap().stdin;
+    let mut id = state.as_ref().unwrap().sent_requests.lock().unwrap();
+    id.insert(1, "initialize".to_string());
 
     #[allow(deprecated)]
     let params = lsp_types::InitializeParams {
@@ -125,18 +136,15 @@ pub fn initialize_lsp(root_dir: &str, state: State<'_, InnerAppState>) -> Result
         ..Default::default()
     };
 
-    let lsp = Lsp {
+    let lsp = LspRequest {
         jsonrpc: "2.0".to_string(),
         id: Some(1),
         method: "initialize".to_string(),
         params,
     };
-    let a = serde_json::to_string(&lsp).unwrap();
+    let serialized_req = serde_json::to_string(&lsp).unwrap();
 
-    // let lsp = &state.lsp;
-
-    // let stdin = lsp.stdin.lock().unwrap();
-    let _ = stdin.write(format!("Content-Length: {}\r\n\r\n{}", a.len(), a).as_bytes());
+    let _ = stdin.write(format!("Content-Length: {}\r\n\r\n{}", serialized_req.len(), serialized_req).as_bytes());
 
     Ok(())
 }
@@ -145,16 +153,19 @@ pub fn initialize_lsp(root_dir: &str, state: State<'_, InnerAppState>) -> Result
 pub fn initialized_lsp(state: State<'_, InnerAppState>) -> Result<(), ()> {
     let state = state.lsp.lock().unwrap();
     let mut stdin = &state.as_ref().unwrap().stdin;
-    let lsp = Lsp {
+
+    let mut id = state.as_ref().unwrap().sent_requests.lock().unwrap();
+    id.insert(1, "initialized".to_string());
+    let lsp = LspRequest {
         jsonrpc: "2.0".to_string(),
         id: None,
         method: "initialized".to_string(),
         params: lsp_types::InitializedParams {},
     };
 
-    let a = serde_json::to_string(&lsp).unwrap();
+    let serialized_req = serde_json::to_string(&lsp).unwrap();
 
-    let _ = stdin.write(format!("Content-Length: {}\r\n\r\n{}", a.len(), a).as_bytes());
+    let _ = stdin.write(format!("Content-Length: {}\r\n\r\n{}", serialized_req.len(), serialized_req).as_bytes());
 
     Ok(())
 }
@@ -165,7 +176,7 @@ pub fn open_file_lsp(filepath: &str, state: State<'_, InnerAppState>) {
     let mut stdin = &state.as_ref().unwrap().stdin;
     let file = fs::read_to_string(filepath).unwrap();
 
-    let lsp = Lsp {
+    let lsp = LspRequest {
         jsonrpc: "2.0".to_string(),
         id: None,
         method: "textDocument/didOpen".to_string(),
@@ -179,16 +190,19 @@ pub fn open_file_lsp(filepath: &str, state: State<'_, InnerAppState>) {
         },
     };
 
-    let a = serde_json::to_string(&lsp).unwrap();
+    let serialized_req = serde_json::to_string(&lsp).unwrap();
 
-    let _ = stdin.write(format!("Content-Length: {}\r\n\r\n{}", a.len(), a).as_bytes());
+    let _ = stdin.write(format!("Content-Length: {}\r\n\r\n{}", serialized_req.len(), serialized_req).as_bytes());
 }
 
 #[tauri::command]
 pub fn semantic_tokens_lsp(filepath: &str, state: State<'_, InnerAppState>) {
     let state = state.lsp.lock().unwrap();
     let mut stdin = &state.as_ref().unwrap().stdin;
-    let lsp = Lsp {
+    let mut id = state.as_ref().unwrap().sent_requests.lock().unwrap();
+    id.insert(2, "textDocument/semanticTokens/full".to_string());
+
+    let lsp = LspRequest {
         jsonrpc: "2.0".to_string(),
         id: Some(2),
         method: "textDocument/semanticTokens/full".to_string(),
@@ -205,16 +219,18 @@ pub fn semantic_tokens_lsp(filepath: &str, state: State<'_, InnerAppState>) {
         },
     };
 
-    let a = serde_json::to_string(&lsp).unwrap();
-
-    let _ = stdin.write(format!("Content-Length: {}\r\n\r\n{}", a.len(), a).as_bytes());
+    let serialized_req = serde_json::to_string(&lsp).unwrap();
+    let _ = stdin.write(format!("Content-Length: {}\r\n\r\n{}", serialized_req.len(), serialized_req).as_bytes());
 }
 
 #[tauri::command]
 pub fn hover_lsp(filepath: &str, line: u32, character: u32, state: State<'_, InnerAppState>) {
     let state = state.lsp.lock().unwrap();
     let mut stdin = &state.as_ref().unwrap().stdin;
-    let lsp = Lsp {
+
+    let mut id = state.as_ref().unwrap().sent_requests.lock().unwrap();
+    id.insert(3, "textDocument/hover".to_string());
+    let lsp = LspRequest {
         jsonrpc: "2.0".to_string(),
         id: Some(3),
         method: "textDocument/hover".to_string(),
@@ -231,8 +247,7 @@ pub fn hover_lsp(filepath: &str, line: u32, character: u32, state: State<'_, Inn
         },
     };
 
-    let a = serde_json::to_string(&lsp).unwrap();
-    println!(":::{a}");
+    let serialized_req = serde_json::to_string(&lsp).unwrap();
 
-    let _ = stdin.write(format!("Content-Length: {}\r\n\r\n{}", a.len(), a).as_bytes());
+    let _ = stdin.write(format!("Content-Length: {}\r\n\r\n{}", serialized_req.len(), serialized_req).as_bytes());
 }

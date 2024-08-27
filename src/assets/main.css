@@ -1,4 +1,5 @@
 @import url("../../node_modules/@xterm/xterm/css/xterm.css");
+@import url("syntax.css");
 
 :root {
 	--editor_background: #2f2f2f;
@@ -62,3 +63,5 @@ body {
 .xterm.focus {
 	border-bottom: var(--accent_color) 1px solid;
 }
+
+

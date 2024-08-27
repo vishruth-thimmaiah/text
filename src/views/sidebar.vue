@@ -40,6 +40,7 @@ async function open_file_picker(): Promise<void> {
 onMounted(async () => {
 	const response = await invoke<{ active_dir: string, files: string[] }>("load_prev_state")
 	if (response.active_dir) {
+		initialize_lsp(response.active_dir)
 		current_dir.value = response.active_dir
 		cwd.value = await ListDirs(response.active_dir)
 		for (const file of response.files) {
