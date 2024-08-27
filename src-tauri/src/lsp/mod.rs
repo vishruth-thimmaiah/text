@@ -144,7 +144,14 @@ pub fn initialize_lsp(root_dir: &str, state: State<'_, InnerAppState>) -> Result
     };
     let serialized_req = serde_json::to_string(&lsp).unwrap();
 
-    let _ = stdin.write(format!("Content-Length: {}\r\n\r\n{}", serialized_req.len(), serialized_req).as_bytes());
+    let _ = stdin.write(
+        format!(
+            "Content-Length: {}\r\n\r\n{}",
+            serialized_req.len(),
+            serialized_req
+        )
+        .as_bytes(),
+    );
 
     Ok(())
 }
@@ -165,7 +172,14 @@ pub fn initialized_lsp(state: State<'_, InnerAppState>) -> Result<(), ()> {
 
     let serialized_req = serde_json::to_string(&lsp).unwrap();
 
-    let _ = stdin.write(format!("Content-Length: {}\r\n\r\n{}", serialized_req.len(), serialized_req).as_bytes());
+    let _ = stdin.write(
+        format!(
+            "Content-Length: {}\r\n\r\n{}",
+            serialized_req.len(),
+            serialized_req
+        )
+        .as_bytes(),
+    );
 
     Ok(())
 }
@@ -192,7 +206,14 @@ pub fn open_file_lsp(filepath: &str, state: State<'_, InnerAppState>) {
 
     let serialized_req = serde_json::to_string(&lsp).unwrap();
 
-    let _ = stdin.write(format!("Content-Length: {}\r\n\r\n{}", serialized_req.len(), serialized_req).as_bytes());
+    let _ = stdin.write(
+        format!(
+            "Content-Length: {}\r\n\r\n{}",
+            serialized_req.len(),
+            serialized_req
+        )
+        .as_bytes(),
+    );
 }
 
 #[tauri::command]
@@ -220,7 +241,14 @@ pub fn semantic_tokens_lsp(filepath: &str, state: State<'_, InnerAppState>) {
     };
 
     let serialized_req = serde_json::to_string(&lsp).unwrap();
-    let _ = stdin.write(format!("Content-Length: {}\r\n\r\n{}", serialized_req.len(), serialized_req).as_bytes());
+    let _ = stdin.write(
+        format!(
+            "Content-Length: {}\r\n\r\n{}",
+            serialized_req.len(),
+            serialized_req
+        )
+        .as_bytes(),
+    );
 }
 
 #[tauri::command]
@@ -249,5 +277,12 @@ pub fn hover_lsp(filepath: &str, line: u32, character: u32, state: State<'_, Inn
 
     let serialized_req = serde_json::to_string(&lsp).unwrap();
 
-    let _ = stdin.write(format!("Content-Length: {}\r\n\r\n{}", serialized_req.len(), serialized_req).as_bytes());
+    let _ = stdin.write(
+        format!(
+            "Content-Length: {}\r\n\r\n{}",
+            serialized_req.len(),
+            serialized_req
+        )
+        .as_bytes(),
+    );
 }

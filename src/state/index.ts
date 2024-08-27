@@ -26,6 +26,7 @@ export const VimState = defineStore('vim', () => {
 
 export const EditorState = defineStore('editor', () => {
 	const cursor = ref<Cursor>(new Cursor(0, 0))
+	const hoverText = ref<string>()
 
-	return { cursor }
+	return { cursor, hoverText }
 })

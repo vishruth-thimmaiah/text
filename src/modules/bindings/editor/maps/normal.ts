@@ -2,6 +2,8 @@ import * as motions from "../motions"
 import { insert_mode } from "../../common"
 import { EditorState } from "../../../../state"
 import { storeToRefs } from "pinia"
+import { hover } from "../../../lsp/requests"
+import { FilesStore } from "../../../files/filedata"
 
 export function normalEditor(keys: string): boolean {
 	const editor = EditorState()
@@ -50,6 +52,12 @@ export function normalEditor(keys: string): boolean {
 			motions.move_right()
 			insert_mode()
 			return true
+
+		// lsp
+		case "K":
+			const {active_tab, files} = storeToRefs(FilesStore())
+			hover(files.value[active_tab.value!].filename, cursor.value.y, cursor.value.x)
+		return true
 
 	}
 	return false
