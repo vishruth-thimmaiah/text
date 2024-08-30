@@ -1,6 +1,7 @@
 import { storeToRefs } from "pinia";
 import { EditorState, GlobalStore } from "../state";
 import { FilesStore } from "./files/filedata";
+import { getFullLine } from "./cursor/index";
 
 export class Cursor {
 	protected cursor: HTMLElement;
@@ -14,6 +15,7 @@ export class Cursor {
 	}
 
 	isValid(x: number, y: number): { newx: number, newy: number } {
+
 		const { hoverText } = storeToRefs(EditorState())
 		hoverText.value = ""
 		const { currFileLines } = storeToRefs(FilesStore())
@@ -24,9 +26,10 @@ export class Cursor {
 		if (currFileLines.value[y] === undefined) {
 			newy = currFileLines.value.length - 1
 		}
-
-		if (currFileLines.value[newy][x] === undefined) {
-			newx = currFileLines.value[newy].length - 1
+		
+		const line = getFullLine(currFileLines.value[newy])
+		if (line[x] === undefined) {
+			newx = line.length - 1
 		}
 
 		return { newx, newy }

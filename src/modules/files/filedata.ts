@@ -2,9 +2,14 @@ import { invoke } from "@tauri-apps/api";
 import { defineStore } from "pinia";
 import { computed, ref } from "vue";
 
+export interface Line {
+	text: string;
+	token: string
+}
+
 interface File {
 	line_count: number;
-	lines: string[];
+	lines: Line[][];
 	filename: string;
 	lines_loaded: number;
 }
@@ -25,7 +30,7 @@ export const FilesStore = defineStore("files", () => {
 		var file: File = {
 			filename,
 			line_count: lineCount,
-			lines: new Array(lineCount),
+			lines: new Array(lineCount).fill([]),
 			lines_loaded: 0
 		}
 		files.value.push(file)
@@ -42,7 +47,7 @@ export const FilesStore = defineStore("files", () => {
 			endPos: end
 		})
 		files.value[index].lines_loaded = end
-		files.value[index].lines.splice(start, end, ...lines)
+		files.value[index].lines.splice(start, end, ...lines.map(line => ([{ text: line, token: "none" }])))
 	}
 
 	async function closeFile(index: number) {

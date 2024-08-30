@@ -23,6 +23,7 @@ mod responses;
 pub struct LspInfo {
     stdin: ChildStdin,
     sent_requests: Mutex<HashMap<usize, String>>,
+    initialized: bool,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -100,6 +101,7 @@ pub fn start_lsp_server(app_handle: AppHandle, state: State<'_, InnerAppState>) 
         *state = Some(LspInfo {
             stdin,
             sent_requests: Mutex::new(HashMap::new()),
+            initialized: false,
         });
     }
 
@@ -108,7 +110,14 @@ pub fn start_lsp_server(app_handle: AppHandle, state: State<'_, InnerAppState>) 
 
 #[tauri::command]
 pub fn initialize_lsp(root_dir: &str, state: State<'_, InnerAppState>) -> Result<(), ()> {
-    let state = state.lsp.lock().unwrap();
+    let mut state = state.lsp.lock().unwrap();
+
+    if state.as_ref().unwrap().initialized {
+        return Ok(());
+    }
+
+    state.as_mut().unwrap().initialized = true;
+
     let mut stdin = &state.as_ref().unwrap().stdin;
     let mut id = state.as_ref().unwrap().sent_requests.lock().unwrap();
     id.insert(1, "initialize".to_string());

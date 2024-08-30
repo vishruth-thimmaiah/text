@@ -19,17 +19,30 @@ import { insertEditor } from './editor/maps/insert';
 import { commandRunner } from './commands/command';
 
 
-export function vim_bindings(panel: Panels, key: string, ctrl: boolean, alt: boolean) {
+export function vim_bindings(panel: Panels, event: KeyboardEvent) {
 
+
+	const key = event.key
+	const ctrl = event.ctrlKey
+	const alt = event.altKey
 
 	const store = VimState()
 	const { vim_mode } = storeToRefs(store)
 
 
 	switch (vim_mode.value) {
-		case VimModes.Normal: normal(panel, key, ctrl, alt); break
-		case VimModes.Insert: insert(panel, key, ctrl, alt); break
-		case VimModes.Command: command(panel, key, ctrl, alt); break
+		case VimModes.Normal:
+			normal(panel, key, ctrl, alt);
+			event.preventDefault()
+			break
+		case VimModes.Insert:
+			if (insert(panel, key, ctrl, alt)) {
+				event.preventDefault()
+			}
+			break
+		case VimModes.Command:
+			command(panel, key, ctrl, alt)
+			break
 	}
 }
 
@@ -75,11 +88,10 @@ function normal(panel: Panels, key: string, ctrl: boolean, alt: boolean) {
 
 function insert(panel: Panels, key: string, _ctrl: boolean, _alt: boolean) {
 	if (panel === Panels.Editor) {
-		insertEditor(key)
+		return insertEditor(key)
 	}
 }
 
 function command(_panel: Panels, key: string, _ctrl: boolean, _alt: boolean) {
-	console.log(key)
 	commandRunner(key)
 }

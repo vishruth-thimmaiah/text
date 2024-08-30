@@ -63,7 +63,6 @@ listen<response>("lsp_response", (event) => {
 		case "textDocument/publishDiagnostics":
 			break
 		case "textDocument/hover":
-			console.log(event.payload.content)
 			const { hoverText } = storeToRefs(EditorState())
 			hoverText.value = event.payload.content.value
 			break

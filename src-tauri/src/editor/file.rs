@@ -43,7 +43,9 @@ pub fn file_lines(
             if next_line == None {
                 break;
             }
-            lines.push(next_line.expect("Error reading file").to_string());
+
+            let new_line = next_line.expect("Error reading file").to_string();
+            lines.push(new_line);
             start_pos += 1;
         }
     }

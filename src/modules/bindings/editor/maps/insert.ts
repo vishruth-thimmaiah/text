@@ -1,21 +1,23 @@
+import { EditorState } from "../../../../state"
+import { getCaretPos, newLine, removeLine } from "../../../cursor/index"
 import * as binds from "../file"
 
 export function insertEditor(key: string) {
 
-	if (key.length === 1) {
-		binds.insert_char(key)
-
+	if (key === "Enter") {
+		newLine()
+		return true
 	}
-
-	else if (key === "Enter") {
-		binds.newline()
-	}
-
+	//
 	else if (key === "Backspace") {
-		binds.remove_char()
+		return removeLine()
 	}
-
+	//
 	else if (key === "Escape") {
+		const {cursor} = EditorState()
+		console.log(getCaretPos())
+		cursor.set(...getCaretPos())
 		binds.save_file()
+		return true
 	}
 }

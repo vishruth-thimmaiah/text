@@ -1,6 +1,9 @@
 <template>
-	<div id="cursor" :style="`left: calc(${cursor.x}ch + 40px); top: ${cursor.y * 2}ch`" :class="vim_mode">
-		<div v-if="hoverText" class="hover">{{ hoverText }}</div>
+	<div class="placeholder">
+		<div id="cursor" :style="`left: calc(${cursor.x}ch + 33px); top: ${cursor.y * 19}px`" :class="vim_mode">
+			&nbsp;
+			<div v-if="hoverText" class="hover">{{ hoverText }}</div>
+		</div>
 	</div>
 </template>
 
@@ -16,12 +19,15 @@ const { vim_mode } = storeToRefs(VimState())
 .placeholder {
 	position: relative;
 	top: 0;
+	height: 0;
+	width: 0;
 }
 
 #cursor {
 	position: relative;
+	font-family: monospace;
+	font-size: 14px;
 	width: 1ch;
-	height: 2ch;
 	z-index: 2;
 	/* transition: all 50ms linear; */
 	/* transition-property: left, top; */
@@ -32,9 +38,7 @@ const { vim_mode } = storeToRefs(VimState())
 	background: var(--cursor_normal);
 }
 
-.insert {
-	border-left: 1px var(--cursor_insert) solid;
-}
+.insert {}
 
 .replace {
 	border-bottom: 1px var(--cursor_replace) solid;
