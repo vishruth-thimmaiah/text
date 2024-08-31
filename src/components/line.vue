@@ -1,11 +1,7 @@
 <template>
-	<span :class="(cursor.y) === lineNumber ? 'active' : ''">
-		<span class="line_number"> {{
-			cursor.y !== lineNumber ?
-				Math.abs(lineNumber! - cursor.y) : lineNumber! + 1
-		}}
-		</span>
-		<span class="line"><span>{{ text }}</span></span>
+	<span :class="(cursor.y) === lineNumber ? 'line active' : 'line'" :data-linenumber="cursor.y !== lineNumber ?
+		Math.abs(lineNumber! - cursor.y) : lineNumber! + 1">
+		<span v-for="token in line">{{ token }}</span>
 	</span>
 </template>
 
@@ -13,27 +9,23 @@
 import { storeToRefs } from 'pinia';
 import { EditorState } from '../state';
 
-defineProps({
-	text: String,
-	lineNumber: Number
-})
+defineProps<{
+	line: string,
+	lineNumber: number
+}>()
 
 const { cursor } = storeToRefs(EditorState())
-
 </script>
 
 <style scoped>
-span {
-	display: inline-block;
-	font-family: monospace;
-	font-size: 12px;
-	letter-spacing: 2px;
-	text-wrap: nowrap;
-	line-height: 18px;
+.line {
+	margin-left: 32px;
 	white-space-collapse: break-spaces;
 
-	.line_number {
+	&::before {
+		content: attr(data-linenumber);
 		position: absolute;
+		left: 0;
 		width: 28px;
 		padding: 0 2px;
 		margin-right: 8px;
@@ -42,24 +34,14 @@ span {
 		-webkit-user-select: none;
 	}
 
-	.line {
-		margin-left: 40px;
-		white-space-collapse: break-spaces;
-	}
-
 	&.active {
 		background-color: var(--editor_background_line);
 
-		.line {
-			background-color: inherit;
-		}
-
-		.line_number {
+		&::before {
 			text-align: right;
 			background-color: inherit;
 			color: var(--accent_color);
 		}
 	}
 }
-
 </style>

@@ -2,7 +2,7 @@
 	<div tabindex="0" id="editor" class="editor">
 		<Cursor v-if="active_tab !== null" />
 		<div @click="move_cursor" id="lines" class="lines">
-			<Line :text="line" v-if="active_tab !== null && files[active_tab]" :line-number="index"
+			<Line :line="line" v-if="active_tab !== null && files[active_tab]" :line-number="index"
 				v-for="(line, index) in files[active_tab].lines" />
 		</div>
 	</div>
@@ -75,7 +75,10 @@ onMounted(async () => {
 		position: relative;
 		display: flex;
 		flex-direction: column;
-		top: -2ch;
+		top: 0;
+		text-wrap: nowrap;
+		font-family: monospace;
+		font-size: 14px;
 
 		&::before {
 			content: '';
@@ -84,6 +87,10 @@ onMounted(async () => {
 			top: 0;
 			height: 100vh;
 			width: 32px;
+		}
+
+		&:focus {
+			outline: none;
 		}
 	}
 }
