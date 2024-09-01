@@ -45,7 +45,7 @@ pub fn handle_responses(response: &str, app: &AppHandle) {
                         "textDocument/semanticTokens/full" => {
                             semantic_tokens(output.result.unwrap())
                         }
-                        "textDocument/hover" => hover(output.result.unwrap()),
+                        "textDocument/hover" => hover(output.result),
                         _ => return,
                     },
                 },
@@ -93,7 +93,13 @@ fn semantic_tokens(params: Value) -> Option<Value> {
     Some(data.to_owned())
 }
 
-fn hover(params: Value) -> Option<Value> {
+fn hover(params: Option<Value>) -> Option<Value> {
+
+    if None == params {
+        return None;
+    }
+
+    let params = params.unwrap();
     let contents = params.get("contents").unwrap();
 
     Some(contents.to_owned())

@@ -2,14 +2,16 @@ import { invoke } from "@tauri-apps/api";
 import { defineStore } from "pinia";
 import { computed, ref } from "vue";
 
-export interface Line {
-	text: string;
-	token: string
+export interface Token {
+	start: number,
+	length: number,
+	tokenType: string
 }
 
 interface File {
 	line_count: number;
-	lines: Line[][];
+	lines: string[];
+	tokens: Token[][]
 	filename: string;
 	lines_loaded: number;
 }
@@ -30,7 +32,8 @@ export const FilesStore = defineStore("files", () => {
 		var file: File = {
 			filename,
 			line_count: lineCount,
-			lines: new Array(lineCount).fill([]),
+			lines: new Array(lineCount),
+			tokens: new Array(lineCount),
 			lines_loaded: 0
 		}
 		files.value.push(file)

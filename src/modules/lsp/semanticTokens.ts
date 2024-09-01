@@ -2,7 +2,7 @@ import { storeToRefs } from "pinia"
 import { FilesStore } from "../files/filedata"
 
 var tokenTypes: string[] = []
-var tokenModifiers: string[] = []
+// var tokenModifiers: string[] = []
 
 interface legend {
 	tokenTypes: string[],
@@ -10,12 +10,13 @@ interface legend {
 }
 export function setTokenTypes(legend: legend) {
 	tokenTypes = legend.tokenTypes
-	tokenModifiers = legend.tokenModifiers
+	// tokenModifiers = legend.tokenModifiers
 }
 
-export function setColorSpans(tokens: number[]) {
+export function setSemTokens(tokens: number[]) {
 	var absLine = 0
-	var prevLength = 0
+	var abspos = 0
+	var prevLen = 0
 	const { files, active_tab } = storeToRefs(FilesStore())
 	for (let i = 0; i < tokens.length; i += 5) {
 		const lineNumber = tokens[i]
@@ -24,22 +25,25 @@ export function setColorSpans(tokens: number[]) {
 		const tokenType = tokens[i + 3]
 		// const tokenModifier = tokens[i + 4]
 
-		lineNumber > 0 ? prevLength = 0 : null
-		absLine += lineNumber
-		const line = files.value[active_tab.value!].lines[absLine]
+		const filesRef = files.value[active_tab.value!]
 
-		var lastToken = line[line.length - 1].text
-
-		if (prevLength !== startPos) {
-			line.splice(line.length - 1, 0, { text: lastToken.substring(0, startPos - prevLength), token: "none" })
-			lastToken = lastToken.substring(startPos - prevLength)
-
+		if (line > 0) {
+			abspos = 0
+			prevLen = 0
 		}
-		prevLength = length
+		absLine += line
+		abspos += startCharacter
 
-		line.splice(line.length - 1, 0, { text: lastToken.substring(0, length), token: tokenTypes[tokenType] })
-		line[line.length - 1].text = lastToken.substring(length)
+		if (filesRef.tokens[absLine] === undefined) {
+			filesRef.tokens[absLine] = []
+		}
+
+		if (prevLen !== abspos) {
+			filesRef.tokens[absLine].push({ start: prevLen, length: abspos - prevLen, tokenType: "none" })
+		}
+		prevLen = abspos + length
+
+		filesRef.tokens[absLine].push({ start: abspos, length: length, tokenType: tokenTypes[tokenType] })
 
 	}
-
 }

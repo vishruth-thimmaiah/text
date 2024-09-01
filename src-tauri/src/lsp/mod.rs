@@ -37,8 +37,10 @@ struct LspRequest<T> {
 
 #[tauri::command]
 pub fn start_lsp_server(app_handle: AppHandle, state: State<'_, InnerAppState>) -> Result<(), ()> {
+    // let mut cmd =
+    //     Command::new(env::var("HOME").unwrap() + "/.vscode-oss/extensions/rust-lang.rust-analyzer-0.3.2062-linux-x64/server/rust-analyzer");
     let mut cmd =
-        Command::new(env::var("HOME").unwrap() + "/.vscode-oss/extensions/rust-lang.rust-analyzer-0.3.2062-linux-x64/server/rust-analyzer");
+        Command::new("rust-analyzer");
 
     cmd.stdout(Stdio::piped());
     cmd.stderr(Stdio::piped());
@@ -115,7 +117,6 @@ pub fn initialize_lsp(root_dir: &str, state: State<'_, InnerAppState>) -> Result
     if state.as_ref().unwrap().initialized {
         return Ok(());
     }
-
     state.as_mut().unwrap().initialized = true;
 
     let mut stdin = &state.as_ref().unwrap().stdin;

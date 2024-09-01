@@ -15,7 +15,6 @@ export class Cursor {
 	}
 
 	isValid(x: number, y: number): { newx: number, newy: number } {
-
 		const { hoverText } = storeToRefs(EditorState())
 		hoverText.value = ""
 		const { currFileLines } = storeToRefs(FilesStore())
