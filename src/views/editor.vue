@@ -1,9 +1,9 @@
 <template>
 	<div tabindex="0" id="editor" class="editor">
 		<Cursor v-if="active_tab !== null" />
-		<div @click="move_cursor" id="lines" class="lines">
-			<Line :tokens="files[active_tab].tokens[index]" :line="line" v-if="active_tab !== null && files[active_tab]" :line-number="index"
-				v-for="(line, index) in files[active_tab].lines" />
+		<div @click="move_cursor" id="lines" class="lines" :contenteditable="vim_mode === VimModes.Insert">
+			<Line :tokens="files[active_tab].tokens[index]" :line="line" v-if="active_tab !== null && files[active_tab]"
+				:line-number="index" v-for="(line, index) in files[active_tab].lines" />
 		</div>
 	</div>
 </template>
@@ -12,8 +12,8 @@
 import Line from '../components/line.vue';
 import Cursor from '../components/cursor.vue';
 import { storeToRefs } from 'pinia';
-import { EditorState, GlobalStore } from '../state';
-import { Panels, vim_bindings } from '../modules/bindings/vim';
+import { EditorState, GlobalStore, VimState } from '../state';
+import { Panels, vim_bindings, VimModes } from '../modules/bindings/vim';
 import { onMounted } from 'vue';
 import { FilesStore } from '../modules/files/filedata';
 
@@ -21,12 +21,13 @@ const store = EditorState()
 const filestore = FilesStore()
 const { editor_top_height, editor_down_height } = storeToRefs(GlobalStore())
 const { files, active_tab } = storeToRefs(FilesStore())
+const { vim_mode } = storeToRefs(VimState())
 
 
 function move_cursor(event: MouseEvent) {
 	const element = document.getElementById("lines")
 	const rect = element?.getBoundingClientRect()
-	store.cursor.set(Math.floor((event.x - rect!.left - 39) / 9), Math.floor((event.y - rect!.top) / 18))
+	store.cursor.set(Math.floor((event.x - rect!.left - 33) / 8), Math.floor((event.y - rect!.top) / 18))
 }
 
 function height() {
@@ -42,11 +43,10 @@ onMounted(async () => {
 		if (["Super", "Control", "Alt", "Shift"].includes(event.key)) {
 			return
 		}
-		vim_bindings(Panels.Editor, event.key, event.ctrlKey, event.metaKey)
 
-		event.preventDefault()
+		vim_bindings(Panels.Editor, event)
+
 	}
-
 	new ResizeObserver(height).observe(editor)
 
 	editor.onscroll = () => {

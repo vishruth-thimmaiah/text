@@ -2,7 +2,7 @@ import { storeToRefs } from "pinia"
 import { FilesStore } from "../files/filedata"
 
 var tokenTypes: string[] = []
-var tokenModifiers: string[] = []
+// var tokenModifiers: string[] = []
 
 interface legend {
 	tokenTypes: string[],
@@ -10,7 +10,7 @@ interface legend {
 }
 export function setTokenTypes(legend: legend) {
 	tokenTypes = legend.tokenTypes
-	tokenModifiers = legend.tokenModifiers
+	// tokenModifiers = legend.tokenModifiers
 }
 
 export function setSemTokens(tokens: number[]) {

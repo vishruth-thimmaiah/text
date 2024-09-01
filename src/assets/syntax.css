@@ -48,6 +48,12 @@
 	font-style: italic;
 }
 
+.macro {
+	color: #8aadf4;
+	font-style: italic;
+	font-weight: 500;
+}
+
 .hint {
 	color: #8bd5ca;
 	font-style: italic;
@@ -125,7 +131,7 @@
 	color: #f5bde6
 }
 
-.string.special {
+.string.special, .formatSpecifier {
 	color: #f5bde6
 }
 
