@@ -50,7 +50,7 @@ export const FilesStore = defineStore("files", () => {
 			endPos: end
 		})
 		files.value[index].lines_loaded = end
-		files.value[index].lines.splice(start, end, ...lines.map(line => ([{ text: line, token: "none" }])))
+		files.value[index].lines.splice(start, end, ...lines)
 	}
 
 	async function closeFile(index: number) {

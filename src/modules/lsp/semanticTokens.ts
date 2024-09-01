@@ -19,8 +19,8 @@ export function setSemTokens(tokens: number[]) {
 	var prevLen = 0
 	const { files, active_tab } = storeToRefs(FilesStore())
 	for (let i = 0; i < tokens.length; i += 5) {
-		const lineNumber = tokens[i]
-		const startPos = tokens[i + 1]
+		const line = tokens[i]
+		const startCharacter = tokens[i + 1]
 		const length = tokens[i + 2]
 		const tokenType = tokens[i + 3]
 		// const tokenModifier = tokens[i + 4]
