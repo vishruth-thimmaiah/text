@@ -11,7 +11,7 @@ use config::{
     themes::load_theme,
 };
 use editor::file::{add_chars, close_file, file_lines, list_dirs, open_file, remove_chars};
-use lsp::*;
+use lsp::{requests::*, start_lsp_server, LspInfo};
 use serde::Serialize;
 use std::sync::Mutex;
 use terminal::Terminal;
@@ -27,7 +27,7 @@ struct OpenFiles {
 }
 
 #[derive(Serialize)]
-struct InnerAppState {
+struct AppState {
     files: Mutex<Vec<OpenFiles>>,
     active_dir: Mutex<Option<String>>,
     #[serde(skip_serializing)]
@@ -36,10 +36,10 @@ struct InnerAppState {
     lsp: Mutex<Option<LspInfo>>,
 }
 
-impl Default for InnerAppState {
+impl Default for AppState {
     fn default() -> Self {
         return {
-            InnerAppState {
+            AppState {
                 files: Mutex::new(Vec::new()),
                 active_dir: Mutex::new(None),
                 terminal: Terminal::default(),
@@ -50,7 +50,7 @@ impl Default for InnerAppState {
 }
 
 fn main() {
-    let app_state = InnerAppState::default();
+    let app_state = AppState::default();
 
     tauri::Builder::default()
         .manage(app_state)

@@ -2,7 +2,6 @@ import { storeToRefs } from "pinia"
 import { VimState } from "../../../state"
 import { move_left } from "./motions"
 import { VimModes } from "../vim"
-import { invoke } from "@tauri-apps/api"
 import { FilesStore } from "../../files/filedata"
 
 var newstring = ""

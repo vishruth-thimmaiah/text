@@ -52,7 +52,7 @@ onMounted(async () => {
 		if (["Super", "Control", "Alt", "Shift"].includes(event.key)) {
 			return
 		}
-		vim_bindings(Panels.Sidebar, event.key, event.ctrlKey, event.metaKey)
+		vim_bindings(Panels.Sidebar, event)
 
 		event.preventDefault()
 	}

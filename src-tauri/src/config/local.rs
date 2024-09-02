@@ -3,7 +3,7 @@ use std::fs;
 use serde::{Deserialize, Serialize};
 use tauri::{AppHandle, Manager};
 
-use crate::InnerAppState;
+use crate::AppState;
 
 #[derive(Debug, Deserialize, Serialize)]
 pub struct History {
@@ -37,7 +37,7 @@ pub fn save_state(app_handle: &AppHandle) {
         active_dir: "".to_string(),
     };
 
-    let state = app_handle.state::<InnerAppState>();
+    let state = app_handle.state::<AppState>();
     history.active_dir = state.active_dir.lock().unwrap().clone().unwrap_or_default();
     for file in &*state.files.lock().unwrap() {
         history.files.push(file.filepath.clone());

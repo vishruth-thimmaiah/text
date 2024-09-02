@@ -2,7 +2,7 @@ use serde::{Deserialize, Serialize};
 use serde_json::Value;
 use tauri::{AppHandle, Manager};
 
-use crate::InnerAppState;
+use crate::AppState;
 
 #[derive(Debug, Deserialize)]
 struct LspResponse<'a> {
@@ -23,7 +23,7 @@ pub struct ClientResponse {
 
 pub fn handle_responses(response: &str, app: &AppHandle) {
     let output = serde_json::from_str::<LspResponse>(&response);
-    let state = app.state::<InnerAppState>();
+    let state = app.state::<AppState>();
 
     if output.is_err() {
         return;

@@ -5,10 +5,10 @@ use std::sync::Mutex;
 use serde::Serialize;
 use tauri::State;
 
-use crate::{InnerAppState, OpenFiles};
+use crate::{AppState, OpenFiles};
 
 #[tauri::command]
-pub fn open_file(filepath: String, state: State<'_, InnerAppState>) -> usize {
+pub fn open_file(filepath: String, state: State<'_, AppState>) -> usize {
     let rope = ropey::Rope::from_reader(File::open(&filepath).unwrap()).unwrap();
 
     let length = rope.len_lines();
@@ -20,7 +20,7 @@ pub fn open_file(filepath: String, state: State<'_, InnerAppState>) -> usize {
 }
 
 #[tauri::command]
-pub fn close_file(file_index: usize, state: State<'_, InnerAppState>) {
+pub fn close_file(file_index: usize, state: State<'_, AppState>) {
     let mut files = state.files.lock().unwrap();
     files.remove(file_index);
 }
@@ -30,7 +30,7 @@ pub fn file_lines(
     file_index: usize,
     mut start_pos: usize,
     end_pos: usize,
-    state: State<'_, InnerAppState>,
+    state: State<'_, AppState>,
 ) -> Vec<String> {
     let files = state.files.lock().unwrap();
     let file = files.get(file_index).unwrap();
@@ -59,7 +59,7 @@ pub fn add_chars(
     chars: String,
     start_line: usize,
     start_point: usize,
-    state: State<'_, InnerAppState>,
+    state: State<'_, AppState>,
 ) {
     let files = &state.files.lock().unwrap();
     let file = files.get(file_index).unwrap();
@@ -84,7 +84,7 @@ pub fn remove_chars(
     count: usize,
     start_line: usize,
     start_point: usize,
-    state: State<'_, InnerAppState>,
+    state: State<'_, AppState>,
 ) {
     let files = &state.files.lock().unwrap();
     let file = files.get(file_index).unwrap();
@@ -149,7 +149,7 @@ fn add_contents(path: PathBuf, cwd: &mut Dirs) {
 }
 
 #[tauri::command]
-pub fn list_dirs(cwd: String, state: State<'_, InnerAppState>) -> Dirs {
+pub fn list_dirs(cwd: String, state: State<'_, AppState>) -> Dirs {
     let root_dir = PathBuf::from(&cwd);
     *state.active_dir.lock().unwrap() = Some(cwd.clone());
 

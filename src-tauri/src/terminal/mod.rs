@@ -7,7 +7,7 @@ use std::{
 use portable_pty::{native_pty_system, CommandBuilder, PtyPair, PtySize};
 use tauri::State;
 
-use crate::InnerAppState;
+use crate::AppState;
 
 pub struct Terminal {
     pair: Mutex<PtyPair>,
@@ -39,7 +39,7 @@ impl Default for Terminal {
 }
 
 #[tauri::command]
-pub async fn init_terminal(state: State<'_, InnerAppState>) -> Result<(), ()> {
+pub async fn init_terminal(state: State<'_, AppState>) -> Result<(), ()> {
     let pair = state.terminal.pair.lock().unwrap();
 
     #[cfg(unix)]
@@ -60,14 +60,14 @@ pub async fn init_terminal(state: State<'_, InnerAppState>) -> Result<(), ()> {
 }
 
 #[tauri::command]
-pub async fn write_to_term(data: &str, state: State<'_, InnerAppState>) -> Result<(), ()> {
+pub async fn write_to_term(data: &str, state: State<'_, AppState>) -> Result<(), ()> {
     let writer = &state.terminal.writer;
     let _ = write!(writer.lock().unwrap(), "{}", data).map_err(|_| ());
     Ok(())
 }
 
 #[tauri::command]
-pub async fn read_from_term(state: State<'_, InnerAppState>) -> Result<String, ()> {
+pub async fn read_from_term(state: State<'_, AppState>) -> Result<String, ()> {
     let term = &state.terminal;
     let mut reader = term.reader.lock().unwrap();
     let data = {
@@ -91,7 +91,7 @@ pub async fn read_from_term(state: State<'_, InnerAppState>) -> Result<String, (
 }
 
 #[tauri::command]
-pub fn resize_term(rows: u16, cols: u16, state: State<'_, InnerAppState>) {
+pub fn resize_term(rows: u16, cols: u16, state: State<'_, AppState>) {
     let _ = state.terminal.pair.lock().unwrap().master.resize(PtySize {
         cols,
         rows,
