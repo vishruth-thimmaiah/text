@@ -64,6 +64,7 @@ pub fn handle_responses(response: &str, app: &AppHandle) {
                     "textDocument/publishDiagnostics" => {
                         publish_diagnostics(output.params.unwrap())
                     }
+                    "$/progress" => progress(output.params.unwrap()),
                     _ => return,
                 },
             },
@@ -94,7 +95,6 @@ fn semantic_tokens(params: Value) -> Option<Value> {
 }
 
 fn hover(params: Option<Value>) -> Option<Value> {
-
     if None == params {
         return None;
     }
@@ -103,4 +103,21 @@ fn hover(params: Option<Value>) -> Option<Value> {
     let contents = params.get("contents").unwrap();
 
     Some(contents.to_owned())
+}
+
+fn progress(params: Value) -> Option<Value> {
+    let value = params.get("value").unwrap();
+
+    if value.get("kind").unwrap() != "report" {
+        return None;
+    }
+
+    if value.get("message").is_some() {
+        return Some(value.get("message").unwrap().to_owned());
+    }
+    else if value.get("percentage").unwrap().to_string() == "100" {
+        return Some(Value::String("complete".to_string()));
+    }
+
+    None
 }

@@ -72,7 +72,7 @@ fn main() {
             initialized_lsp,
             hover_lsp,
             open_file_lsp,
-            semantic_tokens_lsp
+            semantic_tokens_lsp,
         ])
         .build(tauri::generate_context!())
         .expect("error while running application")

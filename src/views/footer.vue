@@ -3,6 +3,7 @@
 		<img @click="show_sidebar = !show_sidebar" src="/svgs/sidebar.svg">
 		<img @click="show_terminal = !show_terminal" src="/svgs/terminal.svg">
 		<label> {{ vim_mode.toUpperCase() }} </label>
+		<label id="lspProgress"> </label>
 		<label id="keystrokes"></label>
 	</div>
 </template>
@@ -35,6 +36,12 @@ img {
 	align-items: center;
 	user-select: none;
 	-webkit-user-select: none;
+}
+
+label {
+	margin: 0 10px;
+	max-width: 20ch;
+	word-wrap: break-word;
 }
 
 #keystrokes {

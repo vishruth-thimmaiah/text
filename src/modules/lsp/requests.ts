@@ -50,11 +50,6 @@ listen<response>("lsp_response", (event) => {
 		case "initialize":
 			invoke("initialized_lsp")
 			setTokenTypes(event.payload.content)
-			lsp_initialized = true
-			// Temp solution to wait for lsp to index files
-			setTimeout(() => {
-				on_load()
-			}, 1000)
 			break
 
 		case "textDocument/semanticTokens/full":
@@ -63,9 +58,17 @@ listen<response>("lsp_response", (event) => {
 		case "textDocument/publishDiagnostics":
 			break
 		case "textDocument/hover":
-			console.log(event.payload.content)
 			const { hoverText } = storeToRefs(EditorState())
 			hoverText.value = event.payload.content.value
+			break
+		case "$/progress":
+			if (event.payload.content) {
+				document.getElementById("lspProgress")!.textContent = event.payload.content
+			}
+			if (event.payload.content == "complete") {
+				lsp_initialized = true
+				on_load()
+			}
 			break
 		default:
 			break

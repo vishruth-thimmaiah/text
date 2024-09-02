@@ -9,11 +9,11 @@ use serde_json::{from_str, json};
 use std::collections::HashMap;
 use std::fs;
 use std::io::{BufRead, BufReader, Read, Write};
+use std::process::Stdio;
 use std::process::{ChildStdin, Command};
 use std::str::FromStr;
 use std::sync::Mutex;
 use std::thread::spawn;
-use std::{env, process::Stdio};
 use tauri::{AppHandle, State};
 
 use crate::InnerAppState;
@@ -39,8 +39,7 @@ struct LspRequest<T> {
 pub fn start_lsp_server(app_handle: AppHandle, state: State<'_, InnerAppState>) -> Result<(), ()> {
     // let mut cmd =
     //     Command::new(env::var("HOME").unwrap() + "/.vscode-oss/extensions/rust-lang.rust-analyzer-0.3.2062-linux-x64/server/rust-analyzer");
-    let mut cmd =
-        Command::new("rust-analyzer");
+    let mut cmd = Command::new("rust-analyzer");
 
     cmd.stdout(Stdio::piped());
     cmd.stderr(Stdio::piped());
@@ -138,6 +137,10 @@ pub fn initialize_lsp(root_dir: &str, state: State<'_, InnerAppState>) -> Result
                     },
                     ..Default::default()
                 }),
+                ..Default::default()
+            }),
+            window: Some(lsp_types::WindowClientCapabilities {
+                work_done_progress: Some(true),
                 ..Default::default()
             }),
             ..Default::default()
