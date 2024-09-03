@@ -1,4 +1,5 @@
 use core::str;
+use download::get_lsp_bin_path;
 use responses::handle_responses;
 use serde_json::from_str;
 use std::collections::HashMap;
@@ -12,6 +13,7 @@ use tauri::{AppHandle, State};
 
 use crate::AppState;
 
+mod download;
 pub mod requests;
 mod responses;
 
@@ -23,10 +25,21 @@ pub struct LspInfo {
     initialized: bool,
 }
 #[tauri::command]
-pub fn start_lsp_server(app_handle: AppHandle, state: State<'_, AppState>) -> Result<(), ()> {
-    // let mut cmd =
-    //     Command::new(env::var("HOME").unwrap() + "/.vscode-oss/extensions/rust-lang.rust-analyzer-0.3.2062-linux-x64/server/rust-analyzer");
-    let mut cmd = Command::new("rust-analyzer");
+pub async fn start_lsp_server(app_handle: AppHandle, state: State<'_, AppState>) -> Result<(), ()> {
+    let downloads_dir = app_handle
+        .path_resolver()
+        .app_data_dir()
+        .unwrap()
+        .join("lsp");
+    let path = get_lsp_bin_path(downloads_dir, download::Languages::Rust).await;
+
+    if path.is_err() {
+        return Err(());
+    }
+
+    let path = path.unwrap();
+
+    let mut cmd = Command::new(path);
 
     cmd.stdout(Stdio::piped());
     cmd.stderr(Stdio::piped());

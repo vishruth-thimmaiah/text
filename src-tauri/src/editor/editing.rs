@@ -2,14 +2,14 @@ use std::fs::File;
 
 use tauri::State;
 
-use crate::InnerAppState;
+use crate::AppState;
 
 #[tauri::command]
 pub fn update_file(
     file_index: usize,
     chars: String,
     start_line: usize,
-    state: State<'_, InnerAppState>,
+    state: State<'_, AppState>,
 ) {
     let files = &state.files.lock().unwrap();
     let file = files.get(file_index).unwrap();

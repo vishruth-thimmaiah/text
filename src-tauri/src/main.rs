@@ -10,7 +10,10 @@ use config::{
     local::{load_prev_state, save_state},
     themes::load_theme,
 };
-use editor::file::{add_chars, close_file, file_lines, list_dirs, open_file, remove_chars};
+use editor::{
+    dirs::list_dirs,
+    editing::update_file,
+    file::{close_file, file_lines, open_file},
 use lsp::{requests::*, start_lsp_server, LspInfo};
 use serde::Serialize;
 use std::sync::Mutex;
@@ -57,9 +60,8 @@ fn main() {
         .invoke_handler(tauri::generate_handler![
             open_file,
             file_lines,
-            add_chars,
             close_file,
-            remove_chars,
+            update_file,
             load_prev_state,
             load_theme,
             list_dirs,

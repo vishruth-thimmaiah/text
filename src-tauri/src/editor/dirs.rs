@@ -3,7 +3,7 @@ use std::path::PathBuf;
 use serde::Serialize;
 use tauri::State;
 
-use crate::InnerAppState;
+use crate::AppState;
 
 #[derive(Debug, Serialize)]
 struct Files {
@@ -47,7 +47,7 @@ fn add_contents(path: PathBuf, cwd: &mut Dirs) {
 }
 
 #[tauri::command]
-pub fn list_dirs(cwd: String, state: State<'_, InnerAppState>) -> Dirs {
+pub fn list_dirs(cwd: String, state: State<'_, AppState>) -> Dirs {
     let root_dir = PathBuf::from(&cwd);
     *state.active_dir.lock().unwrap() = Some(cwd.clone());
 
