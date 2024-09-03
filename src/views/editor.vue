@@ -14,7 +14,7 @@ import Cursor from '../components/cursor.vue';
 import { storeToRefs } from 'pinia';
 import { EditorState, GlobalStore, VimState } from '../state';
 import { Panels, vim_bindings, VimModes } from '../modules/bindings/vim';
-import { onMounted } from 'vue';
+import { nextTick, onMounted } from 'vue';
 import { FilesStore } from '../modules/files/filedata';
 
 const store = EditorState()
@@ -37,6 +37,11 @@ function height() {
 
 
 onMounted(async () => {
+
+	nextTick(() => {
+		document.getElementById("editor")?.focus()
+	})
+
 	height()
 
 	const editor = document.getElementById("editor")!
@@ -70,6 +75,10 @@ onMounted(async () => {
 	overflow-y: auto;
 
 	&:focus {
+		border-bottom: var(--accent_color) 1px solid;
+	}
+
+	&:focus-within {
 		border-bottom: var(--accent_color) 1px solid;
 	}
 

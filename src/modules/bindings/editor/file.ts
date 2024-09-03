@@ -12,6 +12,7 @@ export async function saveFile() {
 	const vim = VimState()
 	const { active_tab } = storeToRefs(FilesStore())
 	vim.change_vim_mode(VimModes.Normal)
+	document.getElementById("editor")?.focus()
 	if (remvd && active_tab.value !== null) {
 		// await invoke("remove_chars", { fileIndex: active_tab.value, count: remvd, startLine: cursor_pos_row, startPoint: cursor_pos_column })
 		remvd = 0
