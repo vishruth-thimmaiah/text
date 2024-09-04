@@ -31,8 +31,8 @@ async function open_file_picker(): Promise<void> {
 		console.warn("not supported")
 	} else if (selected !== null) {
 		current_dir.value = selected
-		initialize_lsp(selected)
 		cwd.value = await ListDirs(selected)
+		initialize_lsp(selected)
 	}
 }
 

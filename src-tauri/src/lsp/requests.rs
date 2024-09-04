@@ -7,6 +7,7 @@ use serde::{Deserialize, Serialize};
 use serde_json::json;
 use std::fs;
 use std::io::Write;
+use std::process::ChildStdin;
 use std::str::FromStr;
 use tauri::State;
 
@@ -21,19 +22,7 @@ struct LspRequest<T> {
     params: T,
 }
 
-#[tauri::command]
-pub fn initialize_lsp(root_dir: &str, state: State<'_, AppState>) -> Result<(), ()> {
-    let mut state = state.lsp.lock().unwrap();
-
-    if state.as_ref().unwrap().initialized {
-        return Ok(());
-    }
-    state.as_mut().unwrap().initialized = true;
-
-    let mut stdin = &state.as_ref().unwrap().stdin;
-    let mut id = state.as_ref().unwrap().sent_requests.lock().unwrap();
-    id.insert(1, "initialize".to_string());
-
+pub fn initialize_lsp(root_dir: &str, stdin: &mut ChildStdin) -> Result<(), ()> {
     #[allow(deprecated)]
     let params = lsp_types::InitializeParams {
         root_uri: Some(Uri::from_str(&("file://".to_owned() + root_dir)).unwrap()),
@@ -86,8 +75,6 @@ pub fn initialized_lsp(state: State<'_, AppState>) -> Result<(), ()> {
     let state = state.lsp.lock().unwrap();
     let mut stdin = &state.as_ref().unwrap().stdin;
 
-    let mut id = state.as_ref().unwrap().sent_requests.lock().unwrap();
-    id.insert(1, "initialized".to_string());
     let lsp = LspRequest {
         jsonrpc: "2.0".to_string(),
         id: None,

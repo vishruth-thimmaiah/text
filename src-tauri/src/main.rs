@@ -14,6 +14,7 @@ use editor::{
     dirs::list_dirs,
     editing::update_file,
     file::{close_file, file_lines, open_file},
+};
 use lsp::{requests::*, start_lsp_server, LspInfo};
 use serde::Serialize;
 use std::sync::Mutex;
@@ -70,7 +71,6 @@ fn main() {
             resize_term,
             read_from_term,
             start_lsp_server,
-            initialize_lsp,
             initialized_lsp,
             hover_lsp,
             open_file_lsp,

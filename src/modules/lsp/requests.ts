@@ -7,7 +7,7 @@ import { EditorState } from "../../state"
 var lsp_initialized = false
 
 export function initialize_lsp(rootDir: string) {
-	invoke("initialize_lsp", { rootDir })
+	invoke("start_lsp_server", { rootDir })
 }
 
 export function open_file(filepath: string) {

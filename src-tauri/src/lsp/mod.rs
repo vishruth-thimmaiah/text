@@ -1,17 +1,18 @@
 use core::str;
-use download::get_lsp_bin_path;
+use download::{get_lsp_bin_path, Languages};
 use responses::handle_responses;
 use serde_json::from_str;
 use std::collections::HashMap;
 use std::fs::OpenOptions;
 use std::io::{BufRead, BufReader, Read, Write};
+use std::path::PathBuf;
 use std::process::Stdio;
 use std::process::{ChildStdin, Command};
 use std::sync::Mutex;
 use std::thread::spawn;
 use tauri::{AppHandle, State};
 
-use crate::AppState;
+use crate::{initialize_lsp, AppState};
 
 mod download;
 pub mod requests;
@@ -22,16 +23,26 @@ const LOG_LSP: bool = false;
 pub struct LspInfo {
     stdin: ChildStdin,
     sent_requests: Mutex<HashMap<usize, String>>,
-    initialized: bool,
 }
 #[tauri::command]
-pub async fn start_lsp_server(app_handle: AppHandle, state: State<'_, AppState>) -> Result<(), ()> {
+pub async fn start_lsp_server(
+    root_dir: &str,
+    app_handle: AppHandle,
+    state: State<'_, AppState>,
+) -> Result<(), ()> {
+    let language = check_if_supported(root_dir);
+    if language.is_none() {
+        return Err(());
+    }
+
+    let language = language.unwrap();
+
     let downloads_dir = app_handle
         .path_resolver()
         .app_data_dir()
         .unwrap()
         .join("lsp");
-    let path = get_lsp_bin_path(downloads_dir, download::Languages::Rust).await;
+    let path = get_lsp_bin_path(downloads_dir, language).await;
 
     if path.is_err() {
         return Err(());
@@ -52,7 +63,7 @@ pub async fn start_lsp_server(app_handle: AppHandle, state: State<'_, AppState>)
         .take()
         .expect("child did not have a handle to stdout");
 
-    let stdin = child
+    let mut stdin = child
         .stdin
         .take()
         .expect("child did not have a handle to stdin");
@@ -108,14 +119,25 @@ pub async fn start_lsp_server(app_handle: AppHandle, state: State<'_, AppState>)
         }
     });
 
-    let mut state = state.lsp.lock().unwrap();
-    if state.is_none() {
-        *state = Some(LspInfo {
+    initialize_lsp(root_dir, &mut stdin).unwrap();
+
+    let mut lsp = state.lsp.lock().unwrap();
+    if lsp.is_none() {
+        *lsp = Some(LspInfo {
             stdin,
             sent_requests: Mutex::new(HashMap::new()),
-            initialized: false,
         });
     }
 
     Ok(())
+}
+
+fn check_if_supported(root_dir: &str) -> Option<Languages> {
+    let path = PathBuf::from(root_dir);
+
+    if path.join("Cargo.toml").exists() {
+        return Some(Languages::Rust);
+    }
+
+    None
 }

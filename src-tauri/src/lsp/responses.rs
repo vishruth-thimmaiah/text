@@ -34,27 +34,6 @@ pub fn handle_responses(response: &str, app: &AppHandle) {
 
     let output = output.unwrap();
 
-    if let Some(id) = output.id {
-        if let Some(request) = sent_requests.remove(&id) {
-            app.emit_all(
-                "lsp_response",
-                ClientResponse {
-                    r#type: request.clone(),
-                    content: match request.as_str() {
-                        "initialize" => initialize(output.result.unwrap()),
-                        "textDocument/semanticTokens/full" => {
-                            semantic_tokens(output.result.unwrap())
-                        }
-                        "textDocument/hover" => hover(output.result),
-                        _ => return,
-                    },
-                },
-            )
-            .unwrap();
-            return;
-        }
-    }
-
     if output.method.is_some() {
         app.emit_all(
             "lsp_response",
@@ -71,6 +50,37 @@ pub fn handle_responses(response: &str, app: &AppHandle) {
         )
         .unwrap();
         return;
+    }
+
+    if let Some(id) = output.id {
+        if id == 1 {
+            app.emit_all(
+                "lsp_response",
+                ClientResponse {
+                    r#type: "initialize".to_string(),
+                    content: initialize(output.result.unwrap()),
+                },
+            )
+            .unwrap();
+            return;
+        }
+        if let Some(request) = sent_requests.remove(&id) {
+            app.emit_all(
+                "lsp_response",
+                ClientResponse {
+                    r#type: request.clone(),
+                    content: match request.as_str() {
+                        "textDocument/semanticTokens/full" => {
+                            semantic_tokens(output.result.unwrap())
+                        }
+                        "textDocument/hover" => hover(output.result),
+                        _ => return,
+                    },
+                },
+            )
+            .unwrap();
+            return;
+        }
     }
 }
 
@@ -114,8 +124,7 @@ fn progress(params: Value) -> Option<Value> {
 
     if value.get("message").is_some() {
         return Some(value.get("message").unwrap().to_owned());
-    }
-    else if value.get("percentage").unwrap().to_string() == "100" {
+    } else if value.get("percentage").unwrap().to_string() == "100" {
         return Some(Value::String("complete".to_string()));
     }
 
