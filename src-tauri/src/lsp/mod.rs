@@ -140,6 +140,9 @@ fn check_if_supported(root_dir: &str) -> Option<Languages> {
     if path.join("Cargo.toml").exists() {
         return Some(Languages::Rust);
     }
+    else if path.join("go.mod").exists() {
+        return Some(Languages::Go);
+    }
 
     None
 }
