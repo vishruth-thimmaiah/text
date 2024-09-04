@@ -1,6 +1,7 @@
 <template>
 	<div class="placeholder">
-		<div id="cursor" :style="`left: calc(${cursor.x}ch + 33px); top: ${cursor.y * 19}px`" :class="vim_mode">
+		<div id="cursor" :style="`left: calc(${cursor.x}ch + 33px); top: ${cursor.y * cursor_height}px`"
+			:class="vim_mode">
 			&nbsp;
 			<div v-if="hoverText" class="hover">{{ hoverText }}</div>
 		</div>
@@ -10,9 +11,16 @@
 <script setup lang="ts">
 import { storeToRefs } from 'pinia';
 import { EditorState, VimState } from '../state';
+import { onMounted, ref } from 'vue';
 
 const { cursor, hoverText } = storeToRefs(EditorState())
 const { vim_mode } = storeToRefs(VimState())
+
+const cursor_height = ref<number>(0)
+
+onMounted(() => {
+	cursor_height.value = document.getElementById("cursor")?.getBoundingClientRect().height!
+})
 </script>
 
 <style scoped>
@@ -25,8 +33,9 @@ const { vim_mode } = storeToRefs(VimState())
 
 #cursor {
 	position: relative;
-	font-family: monospace;
-	font-size: 14px;
+	font-family: var(--editor-font-family);
+	font-size: var(--editor-font-size);
+	font-weight: var(--editor-font-weight);
 	width: 1ch;
 	z-index: 2;
 	/* transition: all 50ms linear; */
@@ -45,16 +54,13 @@ const { vim_mode } = storeToRefs(VimState())
 }
 
 .hover {
-	position: relative;
 	background: var(--editor_background_line_numbers);
 	max-width: 400px;
-	border: var(--topbar_background) 1px solid;
+	box-shadow: rgba(0, 0, 0, 0.15) 0px 5px 15px 0px;
 	width: 40vw;
 	max-height: 20vh;
 	overflow-y: scroll;
 	border-radius: 2px;
-	top: 20px;
-	left: 10px;
 	overflow-wrap: anywhere;
 	white-space-collapse: break-spaces;
 }

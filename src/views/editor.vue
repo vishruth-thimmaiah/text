@@ -73,6 +73,8 @@ onMounted(async () => {
 .editor {
 	overflow-x: auto;
 	overflow-y: auto;
+	color: var(--editor_foreground);
+	background-color: var(--editor_background);
 
 	&:focus {
 		border-bottom: var(--accent_color) 1px solid;
@@ -88,8 +90,9 @@ onMounted(async () => {
 		flex-direction: column;
 		top: 0;
 		text-wrap: nowrap;
-		font-family: monospace;
-		font-size: 14px;
+		font-family: var(--editor-font-family);
+		font-size: var(--editor-font-size);
+		font-weight: var(--editor-font-weight);
 
 		&::before {
 			content: '';

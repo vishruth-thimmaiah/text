@@ -70,7 +70,7 @@ img {
 	color: var(--sidebar_foreground);
 	z-index: 5;
 
-	&:focus {
+	&:focus-within {
 		border-bottom: var(--accent_color) 1px solid;
 	}
 }

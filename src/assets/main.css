@@ -24,13 +24,15 @@
 	--cursor_normal: #ffffff88;
 	--cursor_insert: #ffffff;
 	--cursor_replace: #ffffff;
+
+	--editor-font-family: monospace;
+	--editor-font-size: 14px;
+	--editor-font-weight: 400;
 }
 
 
 body {
 	margin: 0;
-		color: var(--editor_foreground);
-		background-color: var(--editor_background);
 }
 
 /* width */
@@ -60,8 +62,7 @@ body {
 	bottom: 0;
 	border-bottom: var(--terminal_background) 1px solid;
 }
+
 .xterm.focus {
 	border-bottom: var(--accent_color) 1px solid;
 }
-
-
