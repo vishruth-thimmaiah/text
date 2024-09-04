@@ -3498,7 +3498,6 @@ dependencies = [
  "flate2",
  "lsp-types",
  "portable-pty",
- "regex",
  "reqwest",
  "ropey",
  "serde",

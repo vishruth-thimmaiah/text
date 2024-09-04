@@ -8,6 +8,7 @@ mod terminal;
 
 use config::{
     local::{load_prev_state, save_state},
+    settings::load_settings,
     themes::load_theme,
 };
 use editor::{
@@ -75,6 +76,7 @@ fn main() {
             hover_lsp,
             open_file_lsp,
             semantic_tokens_lsp,
+            load_settings,
         ])
         .build(tauri::generate_context!())
         .expect("error while running application")
