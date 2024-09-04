@@ -1,9 +1,14 @@
 import { storeToRefs } from "pinia"
 import { GlobalStore } from "../../../state"
 
-export function toggle() {
+export function toggle_sidebar() {
 	const { show_sidebar } = storeToRefs(GlobalStore())
 	show_sidebar.value = !show_sidebar.value
+}
+
+export function toggle_terminal() {
+	const { show_terminal } = storeToRefs(GlobalStore())
+	show_terminal.value = !show_terminal.value
 }
 
 export function cycle_view(focused_element: number) {

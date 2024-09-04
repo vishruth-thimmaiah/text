@@ -21,6 +21,7 @@
 	--accent_color: lightblue;
 	--command_menu_background: #161616;
 	--command_menu_foreground: #161616;
+	--command_menu_active_background: #323232;
 	--cursor_normal: #ffffff88;
 	--cursor_insert: #ffffff;
 	--cursor_replace: #ffffff;

@@ -1,9 +1,12 @@
 <template>
 	<div v-if="vim_mode === VimModes.Command" id="command">
-		<label class="cmd_display">:{{ command }}</label>
+		<input id="command-mode-input" v-model="command_input" @blur="closePalette" @keydown="keypress"
+			placeholder="Run a Command">
 		<hr>
-		<div class="options" v-for="command in ref_command_list">
-			<label>{{ command }}</label>
+		<div class="options">
+			<div :class="'option' + (index === active_item ? ' active' : '')" v-for="(command, index) in command_list">
+				{{ command }}
+			</div>
 		</div>
 	</div>
 </template>
@@ -12,37 +15,106 @@
 import { storeToRefs } from 'pinia';
 import { VimState } from '../state';
 import { VimModes } from '../modules/bindings/vim';
-import { ref_command_list } from '../modules/bindings/commands/command';
+import { get_command_list, run_command, sort_cmd_pallete } from '../modules/bindings/commands/command';
+import { ref, watch } from 'vue';
 
-const { vim_mode, command } = storeToRefs(VimState())
+const vim_state = VimState()
+const { vim_mode } = storeToRefs(vim_state)
+
+const command_list = ref<string[]>(get_command_list())
+const active_item = ref<number>(0)
+const command_input = ref<string>("")
+
+function keypress(event: KeyboardEvent) {
+	if (
+		event.key === "ArrowDown" ||
+		(event.key === "j" && event.ctrlKey) ||
+		(event.key === "n" && event.ctrlKey)) {
+		if (active_item.value === command_list.value.length - 1) {
+			active_item.value = 0
+		} else {
+			active_item.value += 1
+		}
+	}
+
+	else if (event.key === "ArrowUp" ||
+		(event.key === "k" && event.ctrlKey) ||
+		(event.key === "p" && event.ctrlKey)) {
+		if (active_item.value !== 0) {
+			active_item.value -= 1
+		} else {
+			active_item.value = command_list.value.length - 1
+		}
+	}
+
+	else if (event.key === "Escape") {
+		closePalette()
+	}
+
+	else if (event.key === "Enter") {
+		run_command(command_list.value[active_item.value])
+		closePalette()
+	}
+}
+
+function closePalette() {
+	vim_state.change_vim_mode(VimModes.Normal)
+	command_list.value = get_command_list()
+	command_input.value = ""
+	active_item.value = 0
+	document.getElementById("editor")?.focus()
+}
+
+watch(command_input, (input) => {
+	command_list.value = sort_cmd_pallete(input)
+	if (active_item.value >= command_list.value.length) {
+		active_item.value = command_list.value.length - 1
+	}
+})
+
 </script>
 
 <style scoped>
 #command {
 	position: fixed;
+	box-shadow: 0 0 5px 2px rgba(0, 0, 0, 0.25);
 	top: 45px;
 	right: 20px;
-	width: 450px;
+	width: 50vw;
+	max-width: 700px;
 	z-index: 20;
-	padding: 10px;
 	color: var(--command_menu_foreground);
-	border: var(--accent_color) 2px solid;
-	border-radius: 10px;
+	border-radius: 6px;
 	background-color: var(--command_menu_background);
+	padding: 10px 0;
 
-	.cmd_display {
-		align-content: center;
-		font-size: 16px;
-		font-family: monospace;
+	input {
+		width: 100%;
+		padding-left: 5px;
+		padding-bottom: 0;
+		background: transparent;
+		border: none;
+		outline: none;
+		color: white;
 	}
 
 	.options {
+		max-height: 40vh;
+		overflow-x: hidden;
+		overflow-y: auto;
+	}
+
+	.option {
 		background-color: var(--command_menu_background);
 		list-style: none;
 		margin: 0;
-		padding: 10px;
+		padding: 5px;
+
+		&.active {
+			background: var(--command_menu_active_background);
+			border-right: 3px solid var(--accent_color);
+		}
 
 	}
-
 }
 </style>

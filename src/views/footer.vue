@@ -1,7 +1,7 @@
 <template>
 	<div @mousedown.prevent class="footer">
-		<img @click="show_sidebar = !show_sidebar" src="/svgs/sidebar.svg">
-		<img @click="show_terminal = !show_terminal" src="/svgs/terminal.svg">
+		<img @click="toggle_sidebar" src="/svgs/sidebar.svg">
+		<img @click="toggle_terminal" src="/svgs/terminal.svg">
 		<label> {{ vim_mode.toUpperCase() }} </label>
 		<label id="lspProgress"> </label>
 		<label id="keystrokes"></label>
@@ -10,10 +10,10 @@
 
 <script setup lang="ts">
 import { storeToRefs } from 'pinia';
-import { GlobalStore, VimState } from '../state';
+import { VimState } from '../state';
+import { toggle_sidebar, toggle_terminal } from '../modules/bindings/global';
 
 const { vim_mode } = storeToRefs(VimState())
-const { show_sidebar, show_terminal } = storeToRefs(GlobalStore())
 </script>
 
 <style scoped>

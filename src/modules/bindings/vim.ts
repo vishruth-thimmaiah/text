@@ -16,7 +16,7 @@ import { VimState } from '../../state';
 import { global } from './global/maps/normal';
 import { normalEditor } from './editor/maps/normal';
 import { insertEditor } from './editor/maps/insert';
-import { commandRunner } from './commands/command';
+import { normal_mode } from './common';
 
 
 export function vim_bindings(panel: Panels, event: KeyboardEvent) {
@@ -41,7 +41,7 @@ export function vim_bindings(panel: Panels, event: KeyboardEvent) {
 			}
 			break
 		case VimModes.Command:
-			command(panel, key, ctrl, alt)
+			normal_mode()
 			break
 	}
 }
@@ -90,8 +90,4 @@ function insert(panel: Panels, key: string, _ctrl: boolean, _alt: boolean) {
 	if (panel === Panels.Editor) {
 		return insertEditor(key)
 	}
-}
-
-function command(_panel: Panels, key: string, _ctrl: boolean, _alt: boolean) {
-	commandRunner(key)
 }
