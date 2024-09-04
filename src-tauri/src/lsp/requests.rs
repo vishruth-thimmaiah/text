@@ -133,11 +133,13 @@ pub fn semantic_tokens_lsp(filepath: &str, state: State<'_, AppState>) {
     let state = state.lsp.lock().unwrap();
     let mut stdin = &state.as_ref().unwrap().stdin;
     let mut id = state.as_ref().unwrap().sent_requests.lock().unwrap();
-    id.insert(2, "textDocument/semanticTokens/full".to_string());
+    let mut next_id = state.as_ref().unwrap().next_id;
+    next_id += 1;
+    id.insert(next_id, "textDocument/semanticTokens/full".to_string());
 
     let lsp = LspRequest {
         jsonrpc: "2.0".to_string(),
-        id: Some(2),
+        id: Some(next_id),
         method: "textDocument/semanticTokens/full".to_string(),
         params: lsp_types::SemanticTokensParams {
             text_document: lsp_types::TextDocumentIdentifier {
@@ -167,12 +169,14 @@ pub fn semantic_tokens_lsp(filepath: &str, state: State<'_, AppState>) {
 pub fn hover_lsp(filepath: &str, line: u32, character: u32, state: State<'_, AppState>) {
     let state = state.lsp.lock().unwrap();
     let mut stdin = &state.as_ref().unwrap().stdin;
+    let mut next_id = state.as_ref().unwrap().next_id;
+    next_id += 1;
 
     let mut id = state.as_ref().unwrap().sent_requests.lock().unwrap();
-    id.insert(3, "textDocument/hover".to_string());
+    id.insert(next_id, "textDocument/hover".to_string());
     let lsp = LspRequest {
         jsonrpc: "2.0".to_string(),
-        id: Some(3),
+        id: Some(next_id),
         method: "textDocument/hover".to_string(),
         params: lsp_types::HoverParams {
             work_done_progress_params: lsp_types::WorkDoneProgressParams {

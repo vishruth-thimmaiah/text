@@ -23,6 +23,7 @@ const LOG_LSP: bool = false;
 pub struct LspInfo {
     stdin: ChildStdin,
     sent_requests: Mutex<HashMap<usize, String>>,
+    next_id: usize,
 }
 #[tauri::command]
 pub async fn start_lsp_server(
@@ -126,6 +127,7 @@ pub async fn start_lsp_server(
         *lsp = Some(LspInfo {
             stdin,
             sent_requests: Mutex::new(HashMap::new()),
+            next_id: 1
         });
     }
 
