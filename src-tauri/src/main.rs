@@ -13,7 +13,7 @@ use config::{
 };
 use editor::{
     dirs::list_dirs,
-    editing::update_file,
+    editing::{update_line, delete_char, update_file},
     file::{close_file, file_lines, open_file},
 };
 use lsp::{requests::*, start_lsp_server, LspInfo};
@@ -63,6 +63,8 @@ fn main() {
             open_file,
             file_lines,
             close_file,
+            update_line,
+            delete_char,
             update_file,
             load_prev_state,
             load_theme,

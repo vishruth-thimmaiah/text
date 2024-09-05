@@ -1,5 +1,7 @@
 import { storeToRefs } from "pinia"
 import { FilesStore } from "../files/filedata"
+import { nextTick } from "vue";
+import { invoke } from "@tauri-apps/api";
 
 function createRange(node: Node, targetPosition: number) {
 	let range = document.createRange();
@@ -83,34 +85,60 @@ function childLen(parent: Element, child: Element): number {
 	return 0
 }
 
+export function updateLine(key: string) {
+	const { currFileLines, active_tab } = storeToRefs(FilesStore())
+	const [x, y] = getCaretPos()
+
+	invoke("update_line", {fileIndex: active_tab.value, chars: key, startLine: y, startChar: x})
+
+	const line = currFileLines.value[y]
+	currFileLines.value[y] = line.substring(0, x) + key + line.substring(x)
+
+	nextTick(() => {
+		setCaretPos(x + 1, y)
+	})
+}
 
 export function newLine() {
-	const { currFileLines } = storeToRefs(FilesStore())
+	const { currFileLines, active_tab } = storeToRefs(FilesStore())
 
 	const [x, y] = getCaretPos()
+
+	invoke("update_line", {fileIndex: active_tab.value, chars: "\n", startLine: y, startChar: x})
 
 	const newLine = currFileLines.value[y].substring(x)
 
 	currFileLines.value[y] = currFileLines.value[y].substring(0, x)
 	currFileLines.value.splice(y + 1, 0, newLine)
 
-	setCaretPos(0, y + 1)
+	nextTick(() => {
+		setCaretPos(0, y + 1)
+	})
 }
 
-export function removeLine() {
+export function removeChar() {
 	const [x, y] = getCaretPos()
-
-	if (x !== 0 || y - 1 < 0) {
-		return false
-	}
-	const { currFileLines } = storeToRefs(FilesStore())
-
+	const { currFileLines, active_tab } = storeToRefs(FilesStore())
 	const oldLine = currFileLines.value[y]
 
+	invoke("delete_char", {fileIndex: active_tab.value, count: 1, startLine: y, startChar: x})
 
-	currFileLines.value[y - 1] += oldLine
-	currFileLines.value.splice(y, 1)
+	if (x !== 0 || y - 1 < 0) {
+		currFileLines.value[y] = oldLine.substring(0, x - 1) + oldLine.substring(x);
+		nextTick(() => {
+			setCaretPos(x - 1, y)
+		})
+	}
+	else {
 
-	setCaretPos(currFileLines.value[y - 1].length, y - 1)
+		const oldPrevLine = currFileLines.value[y - 1].trimEnd()
+
+		currFileLines.value[y - 1] = oldPrevLine + oldLine
+		currFileLines.value.splice(y, 1)
+
+		nextTick(() => {
+			setCaretPos(oldPrevLine.length, y - 1)
+		})
+	}
 	return true
 }
