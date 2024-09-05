@@ -45,11 +45,11 @@ ul {
 	}
 
 	.dirs {
-		color: lightblue;
+		color: var(--sidebar_dirs);
 	}
 
 	.files {
-		color: lightcyan;
+		color: var(--sidebar_files);
 		margin-left: 19px;
 		border-radius: 5px;
 		transition: 200ms background linear;

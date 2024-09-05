@@ -52,13 +52,14 @@ onMounted(() => {
 }
 
 .hover {
-	background: var(--editor_background_line_numbers);
+	color: var(--editor_hover_foreground);
+	background-color: var(--editor_hover_background);
 	max-width: 400px;
-	box-shadow: rgba(0, 0, 0, 0.15) 0px 5px 15px 0px;
+	box-shadow: 0 0 5px 2px rgba(0, 0, 0, 0.12);
+	border-radius: 6px;
 	width: 40vw;
 	max-height: 20vh;
 	overflow-y: scroll;
-	border-radius: 2px;
 	overflow-wrap: anywhere;
 	white-space-collapse: break-spaces;
 }

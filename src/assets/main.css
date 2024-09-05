@@ -25,6 +25,10 @@
 	--cursor_normal: #ffffff88;
 	--cursor_insert: #ffffff;
 	--cursor_replace: #ffffff;
+	--sidebar_dirs: lightblue;
+	--sidebar_files: lightcyan;
+	--editor_hover_background: "#161616";
+	--editor_hover_foreground: "#ffffff";
 
 	--editor-font-family: monospace;
 	--editor-font-size: 14px;
@@ -58,12 +62,15 @@ body {
 	background: var(--accent_color);
 }
 
+.terminal {
+	border-bottom: var(--terminal_background) 1px solid;
+
+	&:focus-within {
+		border-bottom: var(--accent_color) 1px solid;
+	}
+}
+
 .xterm {
 	position: absolute;
 	bottom: 0;
-	border-bottom: var(--terminal_background) 1px solid;
-}
-
-.xterm.focus {
-	border-bottom: var(--accent_color) 1px solid;
 }
