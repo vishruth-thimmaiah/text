@@ -1,5 +1,7 @@
 import { storeToRefs } from "pinia"
 import { GlobalStore } from "../../../state"
+import { Panels } from "../vim"
+import { focusTerminal } from "../../terminal"
 
 export function toggle_sidebar() {
 	const { show_sidebar } = storeToRefs(GlobalStore())
@@ -11,8 +13,16 @@ export function toggle_terminal() {
 	show_terminal.value = !show_terminal.value
 }
 
-export function cycle_view(focused_element: number) {
-	const elements = ["editor", "sidebar"]
-	focused_element = focused_element > elements.length - 2 ? 0 : focused_element + 1
-	document.getElementById(elements[focused_element])?.focus()
+export function cycle_view(panel: Panels) {
+	switch (panel) {
+		case Panels.Editor:
+			document.getElementById("sidebar")?.focus()
+			break
+		case Panels.Sidebar:
+			focusTerminal()
+			break
+		case Panels.Terminal:
+			document.getElementById("editor")?.focus()
+			break
+	}
 }

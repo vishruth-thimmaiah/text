@@ -76,10 +76,6 @@ onMounted(async () => {
 	color: var(--editor_foreground);
 	background-color: var(--editor_background);
 
-	&:focus {
-		border-bottom: var(--accent_color) 1px solid;
-	}
-
 	&:focus-within {
 		border-bottom: var(--accent_color) 1px solid;
 	}

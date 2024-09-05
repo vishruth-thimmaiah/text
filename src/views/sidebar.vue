@@ -72,6 +72,7 @@ img {
 
 	&:focus-within {
 		border-bottom: var(--accent_color) 1px solid;
+		outline: none;
 	}
 }
 

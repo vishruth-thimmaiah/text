@@ -7,7 +7,8 @@ export enum VimModes {
 
 export enum Panels {
 	Editor,
-	Sidebar
+	Sidebar,
+	Terminal
 }
 
 
@@ -20,7 +21,6 @@ import { normal_mode } from './common';
 
 
 export function vim_bindings(panel: Panels, event: KeyboardEvent) {
-
 
 	const key = event.key
 	const ctrl = event.ctrlKey
@@ -62,7 +62,7 @@ function normal(panel: Panels, key: string, ctrl: boolean, alt: boolean) {
 	document.getElementById("keystrokes")!.textContent = keys
 	clearTimeout(timeout)
 
-	if (global(keys)) {
+	if (global(panel, keys)) {
 		keys = ""
 		return
 	}
@@ -76,6 +76,7 @@ function normal(panel: Panels, key: string, ctrl: boolean, alt: boolean) {
 			break
 
 		case Panels.Sidebar: return
+		case Panels.Terminal: return
 	}
 
 

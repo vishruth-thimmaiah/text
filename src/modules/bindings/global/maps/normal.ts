@@ -1,11 +1,13 @@
+import { cycle_view } from ".."
 import { CloseFile } from "../../../files/files"
 import { command_mode } from "../../common"
+import { Panels } from "../../vim"
 
-export function global(keys: string): boolean {
+export function global(panel: Panels, keys: string): boolean {
 
 	switch (keys) {
 		case "Controlww":
-			//TODO
+			cycle_view(panel)
 			return true
 		case ":":
 			command_mode()

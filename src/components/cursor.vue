@@ -47,8 +47,6 @@ onMounted(() => {
 	background: var(--cursor_normal);
 }
 
-.insert {}
-
 .replace {
 	border-bottom: 1px var(--cursor_replace) solid;
 }
