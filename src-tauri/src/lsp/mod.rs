@@ -24,6 +24,7 @@ pub struct LspInfo {
     stdin: ChildStdin,
     sent_requests: Mutex<HashMap<usize, String>>,
     next_id: usize,
+    next_sem_token_id: usize,
 }
 #[tauri::command]
 pub async fn start_lsp_server(
@@ -127,7 +128,8 @@ pub async fn start_lsp_server(
         *lsp = Some(LspInfo {
             stdin,
             sent_requests: Mutex::new(HashMap::new()),
-            next_id: 1
+            next_id: 1,
+            next_sem_token_id: 0,
         });
     }
 
@@ -139,8 +141,7 @@ fn check_if_supported(root_dir: &str) -> Option<Languages> {
 
     if path.join("Cargo.toml").exists() {
         return Some(Languages::Rust);
-    }
-    else if path.join("go.mod").exists() {
+    } else if path.join("go.mod").exists() {
         return Some(Languages::Go);
     }
 

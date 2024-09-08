@@ -53,27 +53,31 @@ pub fn handle_responses(response: &str, app: &AppHandle) {
     }
 
     if let Some(id) = output.id {
+        if output.result.is_none() {
+            return;
+        }
+
+        let result = output.result.unwrap();
+
         if id == 1 {
             app.emit_all(
                 "lsp_response",
                 ClientResponse {
                     r#type: "initialize".to_string(),
-                    content: initialize(output.result.unwrap()),
+                    content: initialize(result),
                 },
             )
             .unwrap();
             return;
-        }
-        if let Some(request) = sent_requests.remove(&id) {
+        } else if let Some(request) = sent_requests.remove(&id) {
             app.emit_all(
                 "lsp_response",
                 ClientResponse {
                     r#type: request.clone(),
                     content: match request.as_str() {
-                        "textDocument/semanticTokens/full" => {
-                            semantic_tokens(output.result.unwrap())
-                        }
-                        "textDocument/hover" => hover(output.result),
+                        "textDocument/semanticTokens/full" => semantic_tokens(result),
+                        | "textDocument/semanticTokens/full/delta" => semantic_tokens_delta(result),
+                        "textDocument/hover" => hover(result),
                         _ => return,
                     },
                 },
@@ -104,12 +108,14 @@ fn semantic_tokens(params: Value) -> Option<Value> {
     Some(data.to_owned())
 }
 
-fn hover(params: Option<Value>) -> Option<Value> {
-    if None == params {
-        return None;
-    }
+fn semantic_tokens_delta(params: Value) -> Option<Value> {
+    if let Some(data) = params.get("edits") {
+        return Some(data.to_owned());
+    };
+    None
+}
 
-    let params = params.unwrap();
+fn hover(params: Value) -> Option<Value> {
     let contents = params.get("contents").unwrap();
 
     Some(contents.to_owned())

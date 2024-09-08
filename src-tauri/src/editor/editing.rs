@@ -2,7 +2,7 @@ use std::fs::File;
 
 use tauri::State;
 
-use crate::AppState;
+use crate::{change_file_lsp, partial_semantic_tokens_lsp, AppState};
 
 #[tauri::command]
 pub fn update_line(
@@ -18,6 +18,9 @@ pub fn update_line(
     let line_index = rope.line_to_char(start_line);
 
     rope.insert(line_index + start_char, &chars);
+
+    change_file_lsp(&file.filepath, start_line, start_char, start_line, start_char, &chars, &state);
+    partial_semantic_tokens_lsp(&file.filepath, &state);
 }
 
 #[tauri::command]
@@ -34,6 +37,12 @@ pub fn delete_char(
     let line_index = rope.line_to_char(start_line);
 
     rope.remove(line_index + start_char - count..line_index + start_char);
+    
+    let end_line = rope.char_to_line(line_index + start_char - count);
+    let end_pos = rope.line_to_char(end_line);
+
+    change_file_lsp(&file.filepath, start_line, start_char, end_line, line_index + start_char - count - end_pos, "", &state);
+    partial_semantic_tokens_lsp(&file.filepath, &state);
 }
 
 #[tauri::command]

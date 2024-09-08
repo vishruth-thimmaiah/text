@@ -41,7 +41,7 @@ img {
 label {
 	margin: 0 10px;
 	max-width: 20ch;
-	word-wrap: break-word;
+	text-wrap: nowrap;
 }
 
 #keystrokes {

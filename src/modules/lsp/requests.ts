@@ -3,6 +3,7 @@ import { listen } from "@tauri-apps/api/event"
 import { setSemTokens, setTokenTypes } from "./semanticTokens"
 import { storeToRefs } from "pinia"
 import { EditorState } from "../../state"
+import { setDiagnostics } from "./diagnostics"
 
 var lsp_initialized = false
 
@@ -56,6 +57,7 @@ listen<response>("lsp_response", (event) => {
 			setSemTokens(event.payload.content)
 			break
 		case "textDocument/publishDiagnostics":
+			setDiagnostics(event.payload.content)
 			break
 		case "textDocument/hover":
 			const { hoverText } = storeToRefs(EditorState())
