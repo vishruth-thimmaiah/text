@@ -7,10 +7,12 @@ import { open_file } from "../lsp/requests"
 
 interface Files {
 	name: string
+	ignored: boolean
 }
 
 export interface Dirs {
 	name: string,
+	ignored: boolean,
 	subdirs: Dirs[]
 	files: Files[]
 }

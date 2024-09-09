@@ -1,4 +1,4 @@
-use std::path::PathBuf;
+use std::{path::PathBuf, process::Command};
 
 use serde::Serialize;
 use tauri::State;
@@ -8,6 +8,7 @@ use crate::AppState;
 #[derive(Debug, Serialize)]
 struct Files {
     name: String,
+    ignored: bool,
 }
 
 #[derive(Debug, Serialize)]
@@ -15,19 +16,34 @@ pub struct Dirs {
     name: String,
     files: Vec<Files>,
     subdirs: Vec<Dirs>,
+    ignored: bool,
 }
 
 impl Dirs {
-    fn from(name: String) -> Self {
+    fn from(name: &str, ignored: bool) -> Self {
         Self {
-            name,
+            name: name.to_string(),
             files: Vec::new(),
             subdirs: Vec::new(),
+            ignored
         }
     }
 }
 
-fn add_contents(path: PathBuf, cwd: &mut Dirs) {
+fn check_git_ignored(cwd: &str, file: PathBuf) -> bool {
+    if let Ok(ignored) = Command::new("git")
+        .current_dir(cwd)
+        .args(["check-ignore", file.to_str().unwrap()])
+        .output()
+    {
+        if ignored.stdout.len() > 0 {
+            return true;
+        }
+    }
+    false
+}
+
+fn add_contents(path: PathBuf, dir: &mut Dirs, cwd: &str) {
     let contents = path.read_dir().unwrap();
 
     for item in contents {
@@ -36,24 +52,26 @@ fn add_contents(path: PathBuf, cwd: &mut Dirs) {
             let filename = item.file_name().into_string().unwrap();
             if filetype.is_dir() {
                 let nested_dir = path.join(filename);
-                cwd.subdirs
-                    .push(Dirs::from(nested_dir.to_str().unwrap().to_string()));
-                add_contents(nested_dir, cwd.subdirs.last_mut().unwrap());
+                dir.subdirs.push(Dirs::from(nested_dir.to_str().unwrap(), check_git_ignored(cwd, nested_dir.clone())));
+                add_contents(nested_dir, dir.subdirs.last_mut().unwrap(), cwd);
             } else if filetype.is_file() {
-                cwd.files.push(Files { name: filename })
+                dir.files.push(Files {
+                    ignored: check_git_ignored(cwd, path.join(&filename)),
+                    name: filename,
+                })
             }
         }
     }
 }
 
 #[tauri::command]
-pub fn list_dirs(cwd: String, state: State<'_, AppState>) -> Dirs {
+pub fn list_dirs(cwd: &str, state: State<'_, AppState>) -> Dirs {
     let root_dir = PathBuf::from(&cwd);
-    *state.active_dir.lock().unwrap() = Some(cwd.clone());
+    *state.active_dir.lock().unwrap() = Some(cwd.to_string());
 
-    let mut dirs = Dirs::from(cwd);
+    let mut dirs = Dirs::from(cwd, false);
 
-    add_contents(root_dir, &mut dirs);
+    add_contents(root_dir, &mut dirs, cwd);
 
     dirs
 }

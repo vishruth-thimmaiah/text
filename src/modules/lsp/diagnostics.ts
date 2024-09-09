@@ -11,7 +11,16 @@ interface Diagnostic {
 		href: string
 	},
 	message: string,
-	range: {},
+	range: {
+		start: {
+			line: number,
+			character: number
+		},
+		end: {
+			line: number,
+			character: number
+		}
+	},
 	severity: DiagnosticSeverity,
 	source: string
 }
@@ -23,6 +32,7 @@ export function setDiagnostics(diagnostics: Diagnostic[]) {
 	var hint = 0
 
 	for (let diagnostic of diagnostics) {
+		console.log(diagnostic.message, diagnostic.severity, diagnostic.range)
 		switch (diagnostic.severity) {
 			case DiagnosticSeverity.Error:
 				error += 1

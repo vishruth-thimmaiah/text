@@ -19,7 +19,15 @@ pub fn update_line(
 
     rope.insert(line_index + start_char, &chars);
 
-    change_file_lsp(&file.filepath, start_line, start_char, start_line, start_char, &chars, &state);
+    change_file_lsp(
+        &file.filepath,
+        start_line,
+        start_char,
+        start_line,
+        start_char,
+        &chars,
+        &state,
+    );
     partial_semantic_tokens_lsp(&file.filepath, &state);
 }
 
@@ -37,11 +45,19 @@ pub fn delete_char(
     let line_index = rope.line_to_char(start_line);
 
     rope.remove(line_index + start_char - count..line_index + start_char);
-    
+
     let end_line = rope.char_to_line(line_index + start_char - count);
     let end_pos = rope.line_to_char(end_line);
 
-    change_file_lsp(&file.filepath, start_line, start_char, end_line, line_index + start_char - count - end_pos, "", &state);
+    change_file_lsp(
+        &file.filepath,
+        end_line,
+        line_index + start_char - count - end_pos,
+        start_line,
+        start_char,
+        "",
+        &state,
+    );
     partial_semantic_tokens_lsp(&file.filepath, &state);
 }
 
