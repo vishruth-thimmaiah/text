@@ -17,9 +17,15 @@ export function insert_mode() {
 	vim.change_vim_mode(VimModes.Insert)
 }
 
-export function command_mode() {
+export function command_mode(mods?: string, opts?: any) {
 	const vim = VimState()
-	vim.change_vim_mode(VimModes.Command)
+	if (mods) {
+		vim.change_vim_mode(VimModes.Command, { mod: mods, opts })
+	}
+	else {
+		vim.change_vim_mode(VimModes.Command)
+	}
+
 	nextTick(() => {
 		document.getElementById("command-mode-input")?.focus()
 	})

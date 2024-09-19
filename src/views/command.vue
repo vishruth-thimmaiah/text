@@ -1,9 +1,12 @@
 <template>
 	<div v-if="vim_mode === VimModes.Command" id="command">
-		<input id="command-mode-input" v-model="command_input" @blur="closePalette" @keydown="keypress"
-			placeholder="Run a Command">
-		<hr>
-		<div class="options">
+		<div class="inp">
+			<label v-if="modifier">{{modifier.mod}}</label>
+			<input id="command-mode-input" v-model="command_input" @blur="closePalette" @keydown="keypress"
+				placeholder="Run a Command">
+		</div>
+		<hr v-if="!modifier">
+		<div v-if="!modifier" class="options">
 			<div :class="'option' + (index === active_item ? ' active' : '')" v-for="(command, index) in command_list">
 				{{ command }}
 			</div>
@@ -15,11 +18,11 @@
 import { storeToRefs } from 'pinia';
 import { VimState } from '../state';
 import { VimModes } from '../modules/bindings/vim';
-import { get_command_list, run_command, sort_cmd_pallete } from '../modules/bindings/commands/command';
+import { get_command_list, run_command, run_custom_command, sort_cmd_pallete } from '../modules/bindings/commands/command';
 import { ref, watch } from 'vue';
 
 const vim_state = VimState()
-const { vim_mode } = storeToRefs(vim_state)
+const { vim_mode, modifier } = storeToRefs(vim_state)
 
 const command_list = ref<string[]>(get_command_list())
 const active_item = ref<number>(0)
@@ -52,7 +55,13 @@ function keypress(event: KeyboardEvent) {
 	}
 
 	else if (event.key === "Enter") {
-		run_command(command_list.value[active_item.value])
+		if (!modifier) {
+			run_command(command_list.value[active_item.value])
+		}
+		else {
+			run_custom_command(command_input.value, modifier.value!)
+		}
+
 		closePalette()
 	}
 }
@@ -66,6 +75,9 @@ function closePalette() {
 }
 
 watch(command_input, (input) => {
+	if (!modifier) {
+
+	}
 	command_list.value = sort_cmd_pallete(input)
 	if (active_item.value >= command_list.value.length) {
 		active_item.value = command_list.value.length - 1
@@ -88,14 +100,25 @@ watch(command_input, (input) => {
 	background-color: var(--command_menu_background);
 	padding: 10px 0;
 
-	input {
-		width: 100%;
-		padding-left: 5px;
-		padding-bottom: 0;
-		background: transparent;
-		border: none;
-		outline: none;
-		color: white;
+	.inp {
+		display: flex;
+
+		label {
+			background: var(--command_menu_active_background);
+			margin: 0 5px;
+			padding: 0 5px;
+			border-radius: 6px;
+		}
+
+		input {
+			flex-grow: 1;
+			padding-left: 5px;
+			padding-bottom: 0;
+			background: transparent;
+			border: none;
+			outline: none;
+			color: white;
+		}
 	}
 
 	.options {

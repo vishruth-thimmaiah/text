@@ -14,7 +14,7 @@ use config::{
 use editor::{
     dirs::list_dirs,
     editing::{update_line, delete_char, update_file},
-    file::{close_file, file_lines, open_file},
+    file::{new_file, close_file, file_lines, open_file},
 };
 use lsp::{requests::*, start_lsp_server, LspInfo};
 use serde::Serialize;
@@ -79,6 +79,7 @@ fn main() {
             open_file_lsp,
             semantic_tokens_lsp,
             load_settings,
+            new_file,
         ])
         .build(tauri::generate_context!())
         .expect("error while running application")

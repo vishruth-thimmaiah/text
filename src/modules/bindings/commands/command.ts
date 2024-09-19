@@ -1,3 +1,4 @@
+import { createFile } from "../../files/files"
 import { toggle_sidebar, toggle_terminal } from "../global"
 
 const commands = new Map<string, Function>()
@@ -12,6 +13,12 @@ export function run_command(input: string) {
 	const command = commands.get(input)
 	if (command) {
 		command()
+	}
+}
+
+export function run_custom_command(input: string, opts: {mod: string, opts: any}) {
+	if (opts.mod === "New File") {
+		createFile(input, opts.opts.current_dir)
 	}
 }
 

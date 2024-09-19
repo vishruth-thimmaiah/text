@@ -1,8 +1,9 @@
 <template>
 	<div class="sidebar" id="sidebar" tabindex="0" v-show="show_sidebar">
+		<label class="curr_dir">{{ current_dir }}/</label>
 		<div class="tools">
-			<label class="curr_dir">{{ current_dir }}/</label>
 			<img @click="open_file_picker" class="open_dir" src="/svgs/folder-open.svg">
+			<label class="new_file" @click="command_mode('New File', {current_dir})">+</label>
 		</div>
 		<hr>
 		<Fileview class="fileview" v-if="cwd" :files="cwd"></Fileview>
@@ -19,6 +20,7 @@ import { ListDirs, OpenFile, } from '../modules/files/files';
 import Fileview from '../components/fileview.vue';
 import { Panels, vim_bindings } from '../modules/bindings/vim';
 import { initialize_lsp } from '../modules/lsp/requests';
+import { command_mode } from '../modules/bindings/common';
 
 const { show_sidebar } = storeToRefs(GlobalStore())
 
@@ -76,18 +78,20 @@ img {
 	}
 }
 
+
+.curr_dir {
+	text-wrap: nowrap;
+	overflow-x: auto;
+	margin-right: 5px;
+}
+
 .tools {
 	display: flex;
 	align-items: center;
 	margin: 5px;
+	gap: 10px;
 
-	.curr_dir {
-		text-wrap: nowrap;
-		overflow-x: auto;
-		margin-right: 5px;
-	}
-
-	.open_dir {
+	.new_file {
 		margin-left: auto;
 	}
 }

@@ -47,3 +47,7 @@ export async function CloseFile(index: number = -1): Promise<void> {
 		await closeFile(index)
 	}
 }
+
+export async function createFile(filename: string, path: string) {
+	invoke("new_file", { path, filename })
+}

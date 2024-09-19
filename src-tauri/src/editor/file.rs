@@ -1,3 +1,4 @@
+use std::fs;
 use std::{fs::File, usize};
 use std::sync::Mutex;
 
@@ -15,6 +16,19 @@ pub fn open_file(filepath: String, state: State<'_, AppState>) -> usize {
         rope: Mutex::new(rope),
     });
     length
+}
+
+#[tauri::command]
+pub fn new_file(path: String, filename: String) {
+    let fullpath = path + "/" + filename.as_str();
+    if filename.ends_with("/") {
+        fs::create_dir_all(fullpath).unwrap();
+    }
+    else {
+        let req_dirs = &fullpath[..fullpath.rfind("/").unwrap()];
+        fs::create_dir_all(req_dirs).unwrap();
+        File::create(fullpath).unwrap();
+    }
 }
 
 #[tauri::command]
