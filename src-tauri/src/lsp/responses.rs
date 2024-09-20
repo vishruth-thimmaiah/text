@@ -4,6 +4,8 @@ use tauri::{AppHandle, Manager};
 
 use crate::AppState;
 
+use super::EventType;
+
 #[derive(Debug, Deserialize)]
 struct LspResponse<'a> {
     #[allow(dead_code)]
@@ -17,7 +19,8 @@ struct LspResponse<'a> {
 
 #[derive(Clone, Debug, Serialize)]
 pub struct ClientResponse {
-    r#type: String,
+    #[serde(rename = "eventType")]
+    event_type: EventType,
     content: Option<Value>,
 }
 
@@ -38,7 +41,10 @@ pub fn handle_responses(response: &str, app: &AppHandle) {
         app.emit_all(
             "lsp_response",
             ClientResponse {
-                r#type: output.method.unwrap().to_string(),
+                event_type: EventType {
+                    r#type: output.method.unwrap().to_string(),
+                    file: None,
+                },
                 content: match output.method.unwrap() {
                     "textDocument/publishDiagnostics" => {
                         publish_diagnostics(output.params.unwrap())
@@ -63,7 +69,10 @@ pub fn handle_responses(response: &str, app: &AppHandle) {
             app.emit_all(
                 "lsp_response",
                 ClientResponse {
-                    r#type: "initialize".to_string(),
+                    event_type: EventType {
+                        r#type: "initialize".to_string(),
+                        file: None,
+                    },
                     content: initialize(result),
                 },
             )
@@ -73,10 +82,10 @@ pub fn handle_responses(response: &str, app: &AppHandle) {
             app.emit_all(
                 "lsp_response",
                 ClientResponse {
-                    r#type: request.clone(),
-                    content: match request.as_str() {
+                    event_type: request.clone(),
+                    content: match request.r#type.as_str() {
                         "textDocument/semanticTokens/full" => semantic_tokens(result),
-                        | "textDocument/semanticTokens/full/delta" => semantic_tokens_delta(result),
+                        "textDocument/semanticTokens/full/delta" => semantic_tokens_delta(result),
                         "textDocument/hover" => hover(result),
                         _ => return,
                     },

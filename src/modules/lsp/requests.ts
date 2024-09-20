@@ -42,19 +42,22 @@ function on_load() {
 }
 
 interface response {
-	type: string,
+	eventType: {
+		type: string,
+		file?: string
+	},
 	content: any
 }
 
 listen<response>("lsp_response", (event) => {
-	switch (event.payload.type) {
+	switch (event.payload.eventType.type) {
 		case "initialize":
 			invoke("initialized_lsp")
 			setTokenTypes(event.payload.content)
 			break
 
 		case "textDocument/semanticTokens/full":
-			setSemTokens(event.payload.content)
+			setSemTokens(event.payload.content, event.payload.eventType.file!)
 			break
 		case "textDocument/publishDiagnostics":
 			setDiagnostics(event.payload.content)

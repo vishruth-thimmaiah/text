@@ -13,6 +13,8 @@ use tauri::State;
 
 use crate::AppState;
 
+use super::EventType;
+
 #[derive(Debug, Serialize, Deserialize)]
 struct LspRequest<T> {
     jsonrpc: String,
@@ -138,7 +140,7 @@ pub fn semantic_tokens_lsp(filepath: &str, state: State<'_, AppState>) {
     let mut stdin = &state.as_ref().unwrap().stdin;
     let mut id = state.as_ref().unwrap().sent_requests.lock().unwrap();
     let next_id = state.as_ref().unwrap().next_id;
-    id.insert(next_id, "textDocument/semanticTokens/full".to_string());
+    id.insert(next_id, EventType {r#type: "textDocument/semanticTokens/full".to_string(), file: Some(filepath.to_string())});
 
     let lsp = LspRequest {
         jsonrpc: "2.0".to_string(),
@@ -177,7 +179,7 @@ pub fn hover_lsp(filepath: &str, line: u32, character: u32, state: State<'_, App
     let next_id = state.as_ref().unwrap().next_id;
 
     let mut id = state.as_ref().unwrap().sent_requests.lock().unwrap();
-    id.insert(next_id, "textDocument/hover".to_string());
+    id.insert(next_id, EventType {r#type: "textDocument/hover".to_string(), file: Some(filepath.to_string())});
     let lsp = LspRequest {
         jsonrpc: "2.0".to_string(),
         id: Some(next_id),
@@ -270,7 +272,7 @@ pub fn partial_semantic_tokens_lsp(
 
     let next_id = state.as_ref().unwrap().next_id;
     let next_sem_token_id = state.as_ref().unwrap().next_sem_token_id - 1;
-    id.insert(next_id, "textDocument/semanticTokens/full/delta".to_string());
+    id.insert(next_id, EventType {r#type: "textDocument/semanticTokens/full/delta".to_string(), file: Some(filepath.to_string())});
 
     let lsp = LspRequest {
         jsonrpc: "2.0".to_string(),

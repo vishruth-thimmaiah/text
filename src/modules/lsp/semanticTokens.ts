@@ -13,11 +13,11 @@ export function setTokenTypes(legend: legend) {
 	// tokenModifiers = legend.tokenModifiers
 }
 
-export function setSemTokens(tokens: number[]) {
+export function setSemTokens(tokens: number[], filename: string) {
 	var absLine = 0
 	var abspos = 0
 	var prevLen = 0
-	const { files, active_tab } = storeToRefs(FilesStore())
+	const { files } = storeToRefs(FilesStore())
 	for (let i = 0; i < tokens.length; i += 5) {
 		const line = tokens[i]
 		const startCharacter = tokens[i + 1]
@@ -25,7 +25,9 @@ export function setSemTokens(tokens: number[]) {
 		const tokenType = tokens[i + 3]
 		// const tokenModifier = tokens[i + 4]
 
-		const filesRef = files.value[active_tab.value!]
+		const filesRef = files.value.filter((file) => {
+			return file.filename == filename
+		})[0]
 
 		if (line > 0) {
 			abspos = 0

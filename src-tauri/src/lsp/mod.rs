@@ -1,6 +1,7 @@
 use core::str;
 use download::{get_lsp_bin_path, Languages};
 use responses::handle_responses;
+use serde::Serialize;
 use serde_json::from_str;
 use std::collections::HashMap;
 use std::fs::OpenOptions;
@@ -20,9 +21,15 @@ mod responses;
 
 const LOG_LSP: bool = false;
 
+#[derive(Clone, Debug, Serialize)]
+pub struct EventType {
+    r#type: String,
+    file: Option<String>
+}
+
 pub struct LspInfo {
     stdin: ChildStdin,
-    sent_requests: Mutex<HashMap<usize, String>>,
+    sent_requests: Mutex<HashMap<usize, EventType>>,
     next_id: usize,
     next_sem_token_id: usize,
 }
