@@ -1,12 +1,12 @@
 <template>
-	<ul>
+	<ul :data-depth="depth">
 		<li :class="'dirs' + (dir.ignored ? ' ignored' : '')" v-for="dir in files.subdirs">
 			<details>
 				<summary>
 					<img src="/svgs/folder.svg">
 					{{ dir.name.split('/').pop() }}
 				</summary>
-				<fileview :files="dir"></fileview>
+				<fileview :files="dir" :depth="depth+1"></fileview>
 			</details>
 		</li>
 		<li @click="OpenFile(files.name + '/' + file.name)" :class="'files' + (file.ignored ? ' ignored' : '')"
@@ -22,6 +22,7 @@ import { Dirs, OpenFile } from '../modules/files/files';
 
 defineProps<{
 	files: Dirs
+	depth: number
 }>()
 </script>
 
@@ -35,6 +36,10 @@ ul {
 	padding: 0;
 	margin: 0;
 	margin-left: 20px;
+
+	[data-depth] {
+		border-left: var(--sidebar_indent_color) 1px solid;
+	}
 
 	li {
 		text-wrap: nowrap;

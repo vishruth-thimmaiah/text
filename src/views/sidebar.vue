@@ -6,7 +6,7 @@
 			<label class="new_file" @click="command_mode('New File', {current_dir})">+</label>
 		</div>
 		<hr>
-		<Fileview class="fileview" v-if="cwd" :files="cwd"></Fileview>
+		<Fileview class="fileview" v-if="cwd" :files="cwd" :depth="0"></Fileview>
 	</div>
 </template>
 
