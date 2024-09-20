@@ -83,7 +83,7 @@ pub async fn start_lsp_server(
         .expect("child did not have a handle to stderr");
 
     spawn(move || {
-        child.wait().expect("Err lsp");
+        child.wait().expect("Err stopping lsp");
     });
 
     let log_file = app_handle.path_resolver().app_log_dir().unwrap();

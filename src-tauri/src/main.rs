@@ -80,6 +80,7 @@ fn main() {
             semantic_tokens_lsp,
             load_settings,
             new_file,
+            shutdown_lsp
         ])
         .build(tauri::generate_context!())
         .expect("error while running application")

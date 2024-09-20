@@ -1,9 +1,11 @@
 import { createFile } from "../../files/files"
+import { shutdown_lsp } from "../../lsp/requests"
 import { toggle_sidebar, toggle_terminal } from "../global"
 
 const commands = new Map<string, Function>()
 commands.set("ui: Toggle Sidebar", toggle_sidebar)
 commands.set("ui: Toggle Terminal", toggle_terminal)
+commands.set("lsp: Stop Lsp", shutdown_lsp)
 
 export function get_command_list() {
 	return Array.from(commands.keys())

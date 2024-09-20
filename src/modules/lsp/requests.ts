@@ -11,6 +11,12 @@ export function initialize_lsp(rootDir: string) {
 	invoke("start_lsp_server", { rootDir })
 }
 
+export function shutdown_lsp() {
+	if (lsp_initialized) {
+		invoke("shutdown_lsp")
+	}
+}
+
 export function open_file(filepath: string) {
 	if (lsp_initialized) {
 		invoke("open_file_lsp", { filepath })

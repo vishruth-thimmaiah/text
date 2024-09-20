@@ -5,7 +5,7 @@ use lsp_types::{
 };
 use serde::{Deserialize, Serialize};
 use serde_json::json;
-use std::fs;
+use std::{fs, usize};
 use std::io::Write;
 use std::process::ChildStdin;
 use std::str::FromStr;
@@ -96,6 +96,31 @@ pub fn initialized_lsp(state: State<'_, AppState>) -> Result<(), ()> {
     );
 
     Ok(())
+}
+
+#[tauri::command]
+pub fn shutdown_lsp(state: State<'_, AppState>) {
+    let state = state.lsp.lock().unwrap();
+    let mut stdin = &state.as_ref().unwrap().stdin;
+    let next_id = state.as_ref().unwrap().next_id;
+
+    let lsp: LspRequest<Option<_>> = LspRequest {
+        jsonrpc: "2.0".to_string(),
+        id: Some(next_id),
+        method: "shutdown".to_string(),
+        params: None::<bool>
+    };
+
+    let serialized_req = serde_json::to_string(&lsp).unwrap();
+
+    let _ = stdin.write(
+        format!(
+            "Content-Length: {}\r\n\r\n{}",
+            serialized_req.len(),
+            serialized_req
+        )
+        .as_bytes(),
+    );
 }
 
 #[tauri::command]

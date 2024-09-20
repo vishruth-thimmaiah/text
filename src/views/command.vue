@@ -55,7 +55,7 @@ function keypress(event: KeyboardEvent) {
 	}
 
 	else if (event.key === "Enter") {
-		if (!modifier) {
+		if (!modifier.value) {
 			run_command(command_list.value[active_item.value])
 		}
 		else {
