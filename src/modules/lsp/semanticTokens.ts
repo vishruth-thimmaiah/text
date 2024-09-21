@@ -1,5 +1,8 @@
 import { storeToRefs } from "pinia"
 import { FilesStore } from "../files/filedata"
+import { semantic_tokens } from "./requests"
+import { getCaretPos, setCaretPos } from "../cursor/insert"
+import { nextTick } from "vue"
 
 var tokenTypes: string[] = []
 // var tokenModifiers: string[] = []
@@ -14,6 +17,7 @@ export function setTokenTypes(legend: legend) {
 }
 
 export function setSemTokens(tokens: number[], filename: string) {
+	const [x, y] = getCaretPos()
 	var absLine = 0
 	var abspos = 0
 	var prevLen = 0
@@ -48,4 +52,22 @@ export function setSemTokens(tokens: number[], filename: string) {
 		filesRef.tokens[absLine].push({ start: abspos, length: length, tokenType: tokenTypes[tokenType] })
 
 	}
+
+	// fix cursor position after updating tokens.
+	nextTick(() => {
+		setCaretPos(x, y)
+	})
+}
+
+// TODO: use delta to update tokens
+export function updateSemTokens(filename: string) {
+	const { files } = storeToRefs(FilesStore())
+
+	const selectedFile = files.value.filter((value) => {
+		return value.filename === filename
+	})
+
+	selectedFile[0].tokens = []
+
+	semantic_tokens(filename)
 }

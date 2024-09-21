@@ -46,6 +46,9 @@ export function setCaretPos(x: number, y: number) {
 export function getCaretPos(): [number, number] {
 	const linesEl = document.getElementById("lines")!
 	const selection = document.getSelection()
+	if (selection?.anchorNode == null) {
+		return [0, 0]
+	}
 	const range = selection?.getRangeAt(0)
 
 	if (range?.startContainer.parentElement?.parentElement?.className === "lines") {
