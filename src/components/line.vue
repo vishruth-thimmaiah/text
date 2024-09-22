@@ -1,5 +1,5 @@
 <template>
-	<span :class="(cursor.y) === lineNumber ? 'line active' : 'line'" :data-linenumber="cursor.y !== lineNumber ?
+	<span :class="(cursor.y) === lineNumber ? 'line active' : 'line'" data-diag="" :data-linenumber="cursor.y !== lineNumber ?
 		Math.abs(lineNumber! - cursor.y) : lineNumber! + 1">
 		<span v-if="tokens" v-for="token in tokens" :class="token.tokenType">{{ line?.substring(token.start, token.start
 			+ token.length) }}</span>
@@ -27,6 +27,27 @@ const { cursor } = storeToRefs(EditorState())
 	margin-left: 32px;
 	white-space-collapse: break-spaces;
 
+	&[data-diag='1'] {
+		&::before {
+			color: #f38ba8;
+		}
+	}
+	&[data-diag='2'] {
+		&::before {
+			color: #cba6f7;
+		}
+	}
+	&[data-diag='3'] {
+		&::before {
+			color: #f5c2e7;
+		}
+	}
+	&[data-diag='4'] {
+		&::before {
+			color: #f5e0dc;
+		}
+	}
+
 	&::before {
 		content: attr(data-linenumber);
 		position: absolute;
@@ -37,6 +58,7 @@ const { cursor } = storeToRefs(EditorState())
 		cursor: default;
 		user-select: none;
 		-webkit-user-select: none;
+
 	}
 
 	&.active {
